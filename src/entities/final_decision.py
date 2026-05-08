@@ -43,4 +43,4 @@ class FinalDecision(BaseModel):
             record[f"{prefix}_elapsed_ms"] = result.elapsed_ms
 
             for metric_name,metric_value in result.metrics.items():
-                pass
+                record[f"{prefix}_{metric_name}"] = metric_value

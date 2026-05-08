@@ -18,10 +18,8 @@ class StageResult(BaseModel):
     passed : bool
         True if the crop satisfied this stage's criteria.
     reason : str
-        Short, human-readable explanation. For passed=True a brief
-        confirmation; for passed=False the failing condition.
-        E.g. "blur_variance=45.2 < threshold=80.0".
-    metrics : dict[str, float]
+    Short, human-readable explanation. E.g. "blur_variance=45.2 < threshold=80.0".
+    metrics : dict[str, float] E.g. {"blur_variance": 45.2, "brightness": 120.4, ...}.
     elapsed_ms : float
     """
 

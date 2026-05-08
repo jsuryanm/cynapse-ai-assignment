@@ -10,16 +10,18 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 LOGS_DIR = PROJECT_ROOT / "logs"
 
+__all__ = ["logger", "configure_logger"]
+
+
 def configure_logger(log_level: str = "INFO",
                      logs_dir: Path | None = None) -> Path:
-    """Configure loguru logger setup"""
+    """Configure loguru logger setup."""
+    logs_root = logs_dir if logs_dir is not None else LOGS_DIR
 
-    logs_root = logs_dir if logs_dir is not None else LOGS_DIR 
-    
     now = datetime.now()
     day_folder = logs_root / now.strftime("%Y-%m-%d")
-    day_folder.mkdir(parents=True,exist_ok=True)
-    log_file_path = day_folder / f"{now.strftime("%H-%M-%S")}.log"
+    day_folder.mkdir(parents=True, exist_ok=True)
+    log_file_path = day_folder / f"{now.strftime('%H-%M-%S')}.log"
 
     logger.remove()
 
@@ -33,14 +35,14 @@ def configure_logger(log_level: str = "INFO",
             "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | "
             "<level>{message}</level>"
         ),
-        backtrace=True,    # show full traceback on exceptions
-        diagnose=False,    # set True for local debug; False in shared runs (avoids leaking values)
+        backtrace=True,
+        diagnose=False,
     )
 
     logger.add(
         log_file_path,
-        level="DEBUG",     # always capture the most detail in files
-        rotation="50 MB",  # rotate file if it gets huge mid-run
+        level="DEBUG",
+        rotation="50 MB",
         retention="30 days",
         encoding="utf-8",
         format=(
@@ -50,10 +52,9 @@ def configure_logger(log_level: str = "INFO",
             "{message}"
         ),
         backtrace=True,
-        diagnose=True,     # safe in files; never printed to terminal
-        enqueue=True,      # thread-safe writes — critical if we ever go multi-process
+        diagnose=True,
+        enqueue=True,
     )
 
     logger.info("Logger configured — log file: {}", log_file_path)
     return log_file_path
-
