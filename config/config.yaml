@@ -1,0 +1,28 @@
+
+# Hardware/runtime settings 
+runtime:
+  device: "cuda"
+  batch_size: 16
+  num_workers: 2 
+
+paths:
+  data_dir: "data/raw"
+  artifacts_dir: "artifacts"
+  labels_dir: "data/labels"
+  models_cache: "artifacts/models"
+
+# models downloaded automatically by ultralytics,insightface,open-clip
+models:  
+  yolo_detection: "yolo11m.pt"
+  yolo_pose: "yolo11m-pose.pt"
+  face_detector: "buffalo_l"
+  age_estimator: "mivolo_d1"
+  clip_model: "ViT-B-32"
+  clip_pretrained: "laion2b_s34b_b79k"
+
+# pipeline behaviour
+pipeline:
+  save_rejected: true 
+  save_visualizations: true 
+  decisions_filename: "decisions.parquet"
+  manifest_filename: "manifest.json"

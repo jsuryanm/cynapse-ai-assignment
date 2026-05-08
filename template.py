@@ -28,8 +28,14 @@ list_of_files = [
 
     "src/__init__.py",
     "src/constants.py",
+
+    "src/logger/__init__.py",
     "src/logger/custom_logger.py",
+    
+    "src/settings/__init__.py",
     "src/settings/config.py",
+
+    "src/exceptions/__init__.py",
     "src/exceptions/custom_exceptions.py",
     
     "src/entities/__init__.py",
