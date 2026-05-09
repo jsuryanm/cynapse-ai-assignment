@@ -19,7 +19,7 @@ class ImageLoader:
     4. No image preprocessing (no resizing, no normalization, no CLAHE)
     """
 
-    SUPPORTED_EXTENSIONS: frozenset[str] = frozenset({".jpg","jpeg",".png"})
+    SUPPORTED_EXTENSIONS: frozenset[str] = frozenset({".jpg",".jpeg",".png"})
 
     def load(self,path: Path) -> Crop:
         """Load single image and return Crop entity"""

@@ -1,14 +1,16 @@
 from __future__ import annotations 
-from pathlib import Path
 
 import cv2 
 
 from src.components.base import BaseFilter
 from src.entities.crop import Crop 
 from src.entities.stage_results import StageResult
+
 from src.settings.config import QualityThresholds
 from src.utils.io import ImageLoader
+
 from src.constants import IMAGES_DIR
+
 from src.logger.custom_logger import logger 
 
 class QualityFilter(BaseFilter):
@@ -21,7 +23,7 @@ class QualityFilter(BaseFilter):
     def _apply(self,crop: Crop) -> StageResult:
         width = crop.width
         height = crop.height 
-        aspect = width / height 
+        aspect = height / width
 
         gray = cv2.cvtColor(crop.image,cv2.COLOR_RGB2GRAY)
         brightness = float(gray.mean())
@@ -40,16 +42,16 @@ class QualityFilter(BaseFilter):
             failures.append(f"width: {width} < {t.min_width}")
         
         if height < t.min_height:
-            failures.append(f"width: {height} < {t.min_height}")
+            failures.append(f"height: {height} < {t.min_height}")
         
         if aspect < t.min_aspect_ratio:
-            failures.append(f"width: {aspect:.2f} < {t.min_aspect_ratio}")
+            failures.append(f"aspect: {aspect:.2f} < {t.min_aspect_ratio}")
         
         if brightness < t.min_brightness:
-            failures.append(f"width: {brightness:.1f} < {t.min_brightness}")
+            failures.append(f"brightness: {brightness:.1f} < {t.min_brightness}")
 
         if brightness > t.max_brightness:
-            failures.append(f"{brightness:.1f} > {t.max_brightness}")
+            failures.append(f"brightness: {brightness:.1f} > {t.max_brightness}")
         
         if blur_variance < t.min_blur_variance:
             failures.append(f"blur: {blur_variance:.1f} < {t.min_blur_variance}")
@@ -64,7 +66,7 @@ class QualityFilter(BaseFilter):
                            metrics=metrics)
 
 if __name__ == "__main__":
-    qf = QualityFilter()
+    qf = QualityFilter(QualityThresholds())
     loader = ImageLoader()
     n_passed,n_failed = 0,0 
 
@@ -77,6 +79,7 @@ if __name__ == "__main__":
         else:
             n_failed += 1 
     
-    print()
+    logger.info(f"No of images that passed the first quality check: {n_passed}\n"
+                f"No of images that failed the first quality check: {n_failed}")
 
     

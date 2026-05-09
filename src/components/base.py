@@ -39,7 +39,7 @@ class BaseFilter(ABC):
             elapsed_ms = (time.perf_counter() - start) * 1000.0 
             logger.exception(f"Stage {self.name} crashed on crop_id:{crop.crop_id} after {elapsed_ms:.1f}ms")
             raise StageExecutionError(f"Stage {self.name} failed for crop_id: {crop.crop_id}: {e}",
-                                      stage_name=self.name)
+                                      stage_name=self.name) from e 
         
         elapsed_ms = (time.perf_counter() - start) * 1000.0
 

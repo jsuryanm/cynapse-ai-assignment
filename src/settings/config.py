@@ -62,11 +62,11 @@ class AppConfig(BaseModel):
 # thresholds
 class QualityThresholds(BaseModel):
     min_aspect_ratio: float = 1.3
-    min_width: int = 50
-    min_height: int = 100
+    min_width: int = 80
+    min_height: int = 150
     min_brightness: float = 15.0
     max_brightness: float = 240.0
-    min_blur_variance: float = 80.0
+    min_blur_variance: float = 10.0
 
 class PersonDetectionThresholds(BaseModel):
     min_confidence: float = 0.5
