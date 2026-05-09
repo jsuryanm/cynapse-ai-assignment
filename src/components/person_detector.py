@@ -32,11 +32,11 @@ class PersonDetector(BaseFilter):
 
     def __init__(self,
                  thresholds: PersonDetectionThresholds,
-                 model_path: str = ModelsConfig().yolo_detection,
+                 model_path: str = "yolo11m.pt",
                  device: str | None = None) -> None:
         
         self.thresholds = thresholds
-        self.device = device or torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = device or "cuda" if torch.cuda.is_available() else "cpu"
         logger.info(f"Loading YOLO weights from {model_path} on device {self.device}")
 
         try:
