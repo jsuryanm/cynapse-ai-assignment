@@ -217,7 +217,8 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-data/
+data/labels
+data/raw
 
 artifacts/
 
