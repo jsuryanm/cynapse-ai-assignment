@@ -58,3 +58,5 @@ def configure_logger(log_level: str = "INFO",
 
     logger.info("Logger configured — log file: {}", log_file_path)
     return log_file_path
+
+configure_logger()
