@@ -17,9 +17,10 @@ person_detection:
 # Stage 2: Full body via Pose
 pose: 
   keypoint_confidence: 0.5 # per-keypoint visibility threshold
+  min_face_facing_kpts: 1
   min_head_kpts: 1 # atleast 1 of {nose,eyes,ears}
-  min_torso_kpts: 4 #  both shoulders and hips
-  min_leg_kpts: 4 # both knees and ankles
+  min_shoulder_kpts: 2 # both shoulders 
+  min_knee_kpts: 2 # both knees and ankles
 
 # Stage 3: Face visibility (SRCFD via insightface)
 face:

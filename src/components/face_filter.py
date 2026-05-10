@@ -64,9 +64,42 @@ class FaceFilter(BaseFilter):
                                                "top_face_area_ratio":0.0,
                                                "all_landmarks_in_bbox":0.0})
 
-        areas = np.array([(f.bbox[2] - f.bbox[0])*(f.bbox[3] - f.bbox[1]) for f in faces])        
-        best_idx = int(areas.argmax()) # Finds the largest face
-        best = faces[best_idx]
+        areas = np.array([(f.bbox[2] - f.bbox[0])*(f.bbox[3] - f.bbox[1]) 
+                          for f in faces])   
+
+        person_bbox_norm =  crop.extras.get("person_bbox")
+        
+        if person_bbox_norm is None:
+            valid_indices = list(range(len(faces)))
+        
+        else:
+            px1 = person_bbox_norm[0] * crop.width
+            py1 = person_bbox_norm[1] * crop.height
+            px2 = person_bbox_norm[2] * crop.width
+            py2 = person_bbox_norm[3] * crop.height
+
+            valid_indices = []
+
+            for i,f in enumerate(faces):
+                cx = (f.bbox[0] + f.bbox[2]) / 2
+                cy = (f.bbox[1] + f.bbox[3]) / 2 
+
+                if px1 <= cx <= px2 and py1 <= cy <= py2:
+                    valid_indices.append(i)
+        
+        if not valid_indices:
+            return self._build_result(crop_id=crop.crop_id,
+                                      passed=False,
+                                      reason="no_face_inside_person_bbox",
+                                      metrics={"n_faces":float(n_faces),
+                                               "top_face_confidence":0.0,
+                                               "top_face_area_ratio":0.0,
+                                               "all_landmarks_in_bbox":0.0,})
+
+        valid_areas = areas[valid_indices]
+        local_best =  int(valid_areas.argmax())
+        best_idx = valid_indices[local_best]
+        best = faces[best_idx] 
 
         top_face_confidence = float(best.det_score)
         top_face_area_ratio = float(areas[best_idx]) / crop_area

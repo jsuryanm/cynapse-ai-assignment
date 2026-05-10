@@ -13,8 +13,9 @@ from src.entities.stage_results import StageResult
 from src.utils.io import ImageLoader
 
 from src.constants import (HEAD_KPT_INDICES,
-                           TORSO_KPT_INDICES,
-                           LEG_KPT_INDICES,
+                           HIP_KPT_INDICES,
+                           KNEE_KPT_INDICES,
+                           SHOULDER_KPT_INDICES,
                            IMAGES_DIR)
 # COCO keypoint group indices 
 
