@@ -83,9 +83,8 @@ class PoseThresholds(BaseModel):
 
 class FaceThresholds(BaseModel):
     min_detection_confidence: float = 0.6
-    min_landmarks_frontal: int = 4
-    min_landmarks_profile: int = 2
     min_face_area_ratio: float = 0.005
+    require_all_landmarks_in_bbox: bool = True
 
 
 class AgeThresholds(BaseModel):

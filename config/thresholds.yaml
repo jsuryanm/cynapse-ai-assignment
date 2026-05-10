@@ -24,9 +24,8 @@ pose:
 # Stage 3: Face visibility (SRCFD via insightface)
 face:
   min_detection_confidence: 0.6 
-  min_landmarks_frontal: 4 # frontal face 4-5 landmarks 
-  min_landmarks_profile: 2 # profile: nose + atleast one eye 
   min_face_area_ratio: 0.005 # face_bbox_area / crop_area filtering tiny faces 
+  require_all_landmarks_in_bbox: true
 
 # Stage 4: Age estimation (MiVOLO)
 age: 
