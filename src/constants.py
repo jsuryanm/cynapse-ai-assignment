@@ -13,6 +13,7 @@ KNEE_KPT_INDICES = (13, 14) # l_knee, r_knee
 LANDMARK_NAMES = ["right_eye", "left_eye", "nose", "right_mouth", "left_mouth"]
 COLORS = ["red", "blue", "green", "orange", "purple"]
 
+AGE_MODEL_ID = "iitolstykh/mivolo_v2"
 
 # if __name__ == '__main__':
 #     print(PROJECT_ROOT_DIR)
