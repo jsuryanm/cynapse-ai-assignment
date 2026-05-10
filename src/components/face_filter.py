@@ -86,7 +86,7 @@ class FaceFilter(BaseFilter):
         failures: list[str] = []
 
         if top_face_confidence < t.min_detection_confidence:
-            failures.append(f"face_conf={top_face_confidence:.2f}<{t.min_face_area_ratio}")
+            failures.append(f"face_conf={top_face_confidence:.2f}<{t.min_detection_confidence}")
         
         if top_face_area_ratio < t.min_face_area_ratio:
             failures.append(f"face_area_ratio={top_face_area_ratio:.4f}<{t.min_face_area_ratio}")

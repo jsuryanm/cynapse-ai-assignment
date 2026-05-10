@@ -44,3 +44,5 @@ class FinalDecision(BaseModel):
 
             for metric_name,metric_value in result.metrics.items():
                 record[f"{prefix}_{metric_name}"] = metric_value
+        
+        return record 
