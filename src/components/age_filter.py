@@ -29,6 +29,7 @@ from src.constants import IMAGES_DIR,AGE_MODEL_ID
 
 class AgeFilter(BaseFilter):
     """Predicting age and gender with MiVOLO v2, reject minors"""
+    name = "age"
     
     def __init__(self,
                  thresholds: AgeThresholds,
