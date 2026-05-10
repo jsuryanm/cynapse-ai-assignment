@@ -79,15 +79,17 @@ class PoseFilter(BaseFilter):
         visible_mask = kpts_conf >= self.thresholds.keypoint_confidence
 
         n_head_visible = int(visible_mask[list(HEAD_KPT_INDICES)].sum())
-        n_torso_visible = int(visible_mask[list(TORSO_KPT_INDICES)].sum())
-        n_leg_visible = int(visible_mask[list(LEG_KPT_INDICES)].sum())
+        n_shoulder_visible = int(visible_mask[list(SHOULDER_KPT_INDICES)].sum())
+        n_hip_visible = int(visible_mask[list(HIP_KPT_INDICES)].sum())
+        n_knee_visible = int(visible_mask[list(KNEE_KPT_INDICES)].sum())
         n_visible_total = int(visible_mask.sum())
 
         metrics: dict[str,float] = {"n_persons_detected":float(n_persons),
                                     "n_visible_keypoints":float(n_visible_total),
                                     "n_head_visible":float(n_head_visible),
-                                    "n_torso_visible":float(n_torso_visible),
-                                    "n_leg_visible":float(n_leg_visible)}
+                                    "n_shoulder_visible":float(n_shoulder_visible),
+                                    "n_hip_visible":float(n_hip_visible),
+                                    "n_knee_visible":float(n_knee_visible)}
         
         t = self.thresholds 
         failures: list[str] = []
@@ -95,11 +97,14 @@ class PoseFilter(BaseFilter):
         if n_head_visible < t.min_head_kpts:
             failures.append(f"head={n_head_visible} < {t.min_head_kpts}")
         
-        if n_torso_visible < t.min_torso_kpts:
-            failures.append(f"torso={n_torso_visible} < {t.min_torso_kpts}")
+        if n_shoulder_visible < t.min_shoulder_kpts:
+            failures.append(f"torso={n_shoulder_visible} < {t.min_shoulder_kpts}")
         
-        if n_leg_visible < t.min_leg_kpts:
-            failures.append(f"legs={n_leg_visible} < {t.min_leg_kpts}")
+        if n_hip_visible < t.min_hip_kpts:
+            failures.append(f"legs={n_hip_visible} < {t.min_hip_kpts}")
+        
+        if n_knee_visible < t.min_knee_kpts:
+            failures.append(f"knees={n_knee_visible} < {t.min_knee_kpts}")
         
         passed = len(failures) == 0
         reason = "ok" if passed else " | ".join(failures)

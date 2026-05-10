@@ -77,8 +77,9 @@ class PersonDetectionThresholds(BaseModel):
 class PoseThresholds(BaseModel):
     keypoint_confidence: float = 0.5
     min_head_kpts: int = 1
-    min_torso_kpts: int = 4
-    min_leg_kpts: int = 4
+    min_shoulder_kpts: int = 2
+    min_knee_kpts: int = 2
+    min_hip_kpts: int = 2 
 
 
 class FaceThresholds(BaseModel):
