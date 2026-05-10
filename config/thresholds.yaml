@@ -31,7 +31,7 @@ face:
 # Stage 4: Age estimation (MiVOLO)
 age: 
   min_age: 16 
-  age_confidence: 0.5 
+  min_gender_confidence: 0.6
 
 # Stage 5:  CLIP zero shot/manequinn filtering
 clip_ad_filter:

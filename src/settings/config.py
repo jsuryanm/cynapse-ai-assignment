@@ -90,7 +90,7 @@ class FaceThresholds(BaseModel):
 
 class AgeThresholds(BaseModel):
     min_age: int = 16
-    age_confidence: float = 0.5
+    min_gender_confidence: float = 0.6
 
 
 class CLIPAdFilterThresholds(BaseModel):
