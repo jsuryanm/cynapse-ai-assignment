@@ -80,8 +80,7 @@ class FaceFilter(BaseFilter):
         metrics: dict[str,float] = {"n_faces":float(n_faces),
                                     "top_face_confidence":top_face_confidence,
                                     "top_face_area_ratio":top_face_area_ratio,
-                                    "all_landmarks_in_bbox":float(all_inside)}
-        
+                                    "all_landmarks_in_bbox":float(all_inside)}            
         t = self.thresholds 
         failures: list[str] = []
 
@@ -96,6 +95,12 @@ class FaceFilter(BaseFilter):
         
         passed = len(failures) == 0 
         reason = "ok" if passed else " | ".join(failures)
+
+        if passed:
+            crop.extras["face_bbox"] = (float(x1)/crop.width,
+                                        float(y1)/crop.height,
+                                        float(x2)/crop.width,
+                                        float(y2)/crop.height)
         
         return self._build_result(crop_id=crop.crop_id,
                                   passed=passed,

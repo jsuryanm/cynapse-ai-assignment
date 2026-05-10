@@ -9,8 +9,7 @@ transformers
 
 huggingface_hub
 safetensors
-timm
-
+timm==0.8.13.dev0
 
 opencv-python-headless 
 Pillow 
