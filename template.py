@@ -42,10 +42,12 @@ list_of_files = [
     "src/entities/crop.py",
     "src/entities/stage_results.py",
     "src/entities/final_decision.py",
+    "src/entities/validation_label.py",
 
     "src/data/__init__.py",
     "src/data/loader.py",
     "src/data/integrity.py",
+    "src/data/labels.py",
 
     "src/components/__init__.py",
     "src/components/base.py",
