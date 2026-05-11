@@ -527,10 +527,10 @@ crops would inflate every count and bias evaluation.
 | After deduplication | ~1,001 |
 | After Stage 0 (Quality) | 784 |
 | After Stage 1 (Person) | 461 |
-| After Stage 2 (Pose) | 208 |
-| After Stage 3 (Face) | 124 |
-| After Stage 4 (Age) | *pending* |
-| After Stage 5 (Ad/CLIP) | *pending* |
+| After Stage 2 (Pose) | 262 |
+| After Stage 3 (Face) | 153 |
+| After Stage 4 (Age) | 142 |
+| After Stage 5 (Ad/CLIP) | 117 |
 
 The funnel shape — biggest drops at pose and face — matches the assignment's
 strictness on the full-body and face-visibility requirements.
