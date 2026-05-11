@@ -1,9 +1,10 @@
 torch 
 torchvision 
 
+scikit-learn
+
 ultralytics
 insightface 
-open-clip-torch
 onnxruntime-gpu
 transformers 
 
@@ -38,9 +39,6 @@ notebook
 mypy
 pytest
 ruff 
-
-mlflow 
-dvc
 
 fastapi
 uvicorn[standard]
