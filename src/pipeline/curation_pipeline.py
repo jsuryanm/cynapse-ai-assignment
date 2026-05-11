@@ -37,7 +37,7 @@ class CurationPipeline:
             if i % 100 == 0:
                 logger.info(f"Progress: {i}/{len(paths)}")
             
-        n_kept = sum(1 for d in decision if d.kept)
+        n_kept = sum(1 for d in decisions if d.kept)
         logger.info(f"Pipeline run complete: {n_kept} kept, {len(decisions) - n_kept} rejected")
         return decisions 
     
@@ -77,4 +77,5 @@ class CurationPipeline:
                              source_path=str(path),
                              kept=(rejected_at is None),
                              stage_results=results,
+                             rejected_at_stage=rejected_at,
                              total_elapsed_ms=total_ms)

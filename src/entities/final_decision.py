@@ -22,7 +22,7 @@ class FinalDecision(BaseModel):
     crop_id: str
     source_path: str
     kept: bool
-    rejected_at_stage: str | None
+    rejected_at_stage: str | None = None 
     stage_results: list[StageResult] = Field(default_factory=list)
     total_elapsed_ms: float = 0.0
 

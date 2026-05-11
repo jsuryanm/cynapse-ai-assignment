@@ -30,7 +30,7 @@ def _tool_versions() -> dict[str,str]:
 
 def build_manifest(run_id: str,
                    started_at: str,
-                   finishes_at: str,
+                   finished_at: str,
                    data_dir: str,
                    dedup_report: DedupReport,
                    decisions: list[FinalDecision],
@@ -45,12 +45,12 @@ def build_manifest(run_id: str,
             outcomes[f"rejected_at_{d.rejected_at_stage}"] += 1
         
     started_dt = datetime.fromisoformat(started_at.rstrip("Z"))
-    finished_dt = datetime.fromisoformat(finishes_at.rstrip("Z"))
+    finished_dt = datetime.fromisoformat(finished_at.rstrip("Z"))
     elapsed_seconds = (finished_dt - started_dt).total_seconds()
 
     return {"run_id":run_id,
             "started_at":started_dt,
-            "finished_at":finishes_at,
+            "finished_at":finished_dt,
             "elapsed_seconds":round(elapsed_seconds,2),
             "data_dir":data_dir,
             "dedup":dedup_report.to_dict(),

@@ -17,6 +17,7 @@ SAMPLES_PER_STAGE = 20 # how many rejected samples to keep per stage
 
 def _ensure_folder(path: Path) -> Path:
     path.mkdir(parents=True,exist_ok=True)
+    return path
 
 def write_decisions_parquet(decisions: list[FinalDecision],path: Path) -> None:
     records = [d.to_flat_record() for d in decisions]

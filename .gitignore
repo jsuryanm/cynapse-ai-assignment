@@ -224,3 +224,5 @@ artifacts/
 
 *.pt
 *.docx
+
+data/interim/*
