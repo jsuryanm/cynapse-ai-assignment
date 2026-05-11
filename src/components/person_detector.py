@@ -117,31 +117,31 @@ class PersonDetector(BaseFilter):
                            reason=reason,
                            metrics=metrics)
 
-if __name__ == "__main__":
-    quality_thresholds = QualityThresholds()
-    quality_filter = QualityFilter(quality_thresholds)
+# if __name__ == "__main__":
+#     quality_thresholds = QualityThresholds()
+#     quality_filter = QualityFilter(quality_thresholds)
     
-    detection_thresholds = PersonDetectionThresholds()
-    detector = PersonDetector(detection_thresholds)
+#     detection_thresholds = PersonDetectionThresholds()
+#     detector = PersonDetector(detection_thresholds)
     
-    loader = ImageLoader()
+#     loader = ImageLoader()
 
-    outcomes: Counter[str] = Counter()
+#     outcomes: Counter[str] = Counter()
 
-    for path in sorted(IMAGES_DIR.glob("*.png")):
-        crop = loader.load(path)
+#     for path in sorted(IMAGES_DIR.glob("*.png")):
+#         crop = loader.load(path)
 
-        quality_result = quality_filter.apply(crop)
-        if not quality_result.passed:
-            outcomes['rejected_at_quality'] += 1
-            continue 
+#         quality_result = quality_filter.apply(crop)
+#         if not quality_result.passed:
+#             outcomes['rejected_at_quality'] += 1
+#             continue 
 
-        detection_result = detector.apply(crop)
-        if not detection_result.passed:
-            outcomes['rejected_at_detection'] += 1 
-            continue
+#         detection_result = detector.apply(crop)
+#         if not detection_result.passed:
+#             outcomes['rejected_at_detection'] += 1 
+#             continue
         
-        outcomes['passed_both'] += 1 
+#         outcomes['passed_both'] += 1 
     
-    for outcome,count in outcomes.most_common():
-        logger.info(f" {outcome} : {count}")
+#     for outcome,count in outcomes.most_common():
+#         logger.info(f" {outcome} : {count}")

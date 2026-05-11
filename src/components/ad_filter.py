@@ -127,45 +127,45 @@ class AdFilter(BaseFilter):
                            reason=reason,
                            metrics=metrics)
 
-if __name__ == "__main__":
-    qf = QualityFilter(QualityThresholds())
-    detector = PersonDetector(PersonDetectionThresholds())
-    pose = PoseFilter(PoseThresholds())
-    face = FaceFilter(FaceThresholds())
-    age = AgeFilter(AgeThresholds())
-    ad = AdFilter(CLIPAdFilterThresholds())
-    loader = ImageLoader() 
+# if __name__ == "__main__":
+#     qf = QualityFilter(QualityThresholds())
+#     detector = PersonDetector(PersonDetectionThresholds())
+#     pose = PoseFilter(PoseThresholds())
+#     face = FaceFilter(FaceThresholds())
+#     age = AgeFilter(AgeThresholds())
+#     ad = AdFilter(CLIPAdFilterThresholds())
+#     loader = ImageLoader() 
 
-    outcomes: Counter[str] = Counter()
+#     outcomes: Counter[str] = Counter()
 
-    for path in sorted(IMAGES_DIR.glob("*.png")):
-        crop = loader.load(path)
+#     for path in sorted(IMAGES_DIR.glob("*.png")):
+#         crop = loader.load(path)
 
-        if not qf.apply(crop).passed:
-            outcomes["rejected_at_quality"] += 1
-            continue
+#         if not qf.apply(crop).passed:
+#             outcomes["rejected_at_quality"] += 1
+#             continue
 
-        if not detector.apply(crop).passed:
-            outcomes["rejected_at_detection"] += 1
-            continue
+#         if not detector.apply(crop).passed:
+#             outcomes["rejected_at_detection"] += 1
+#             continue
 
-        if not pose.apply(crop).passed:
-            outcomes["rejected_at_pose"] += 1
-            continue
+#         if not pose.apply(crop).passed:
+#             outcomes["rejected_at_pose"] += 1
+#             continue
 
-        if not face.apply(crop).passed:
-            outcomes["rejected_at_face"] += 1
-            continue
+#         if not face.apply(crop).passed:
+#             outcomes["rejected_at_face"] += 1
+#             continue
 
-        if not age.apply(crop).passed:
-            outcomes["rejected_at_age"] += 1
-            continue
+#         if not age.apply(crop).passed:
+#             outcomes["rejected_at_age"] += 1
+#             continue
 
-        if not ad.apply(crop).passed:
-            outcomes["rejected_at_ad"] += 1
-            continue
+#         if not ad.apply(crop).passed:
+#             outcomes["rejected_at_ad"] += 1
+#             continue
 
-        outcomes["passed_all"] += 1
+#         outcomes["passed_all"] += 1
 
-    for outcome, count in outcomes.most_common():
-        logger.info(" {} : {}", outcome, count)
+#     for outcome, count in outcomes.most_common():
+#         logger.info(" {} : {}", outcome, count)

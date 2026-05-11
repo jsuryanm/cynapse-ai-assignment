@@ -65,21 +65,21 @@ class QualityFilter(BaseFilter):
                            reason=reason,
                            metrics=metrics)
 
-if __name__ == "__main__":
-    qf = QualityFilter(QualityThresholds())
-    loader = ImageLoader()
-    n_passed,n_failed = 0,0 
+# if __name__ == "__main__":
+#     qf = QualityFilter(QualityThresholds())
+#     loader = ImageLoader()
+#     n_passed,n_failed = 0,0 
 
-    for path in sorted(IMAGES_DIR.glob("*.png")):
-        crop = loader.load(path)
-        result = qf.apply(crop)
+#     for path in sorted(IMAGES_DIR.glob("*.png")):
+#         crop = loader.load(path)
+#         result = qf.apply(crop)
 
-        if result.passed:
-            n_passed += 1
-        else:
-            n_failed += 1 
+#         if result.passed:
+#             n_passed += 1
+#         else:
+#             n_failed += 1 
     
-    logger.info(f"No of images that passed the first quality check: {n_passed}\n"
-                f"No of images that failed the first quality check: {n_failed}")
+#     logger.info(f"No of images that passed the first quality check: {n_passed}\n"
+#                 f"No of images that failed the first quality check: {n_failed}")
 
     

@@ -65,6 +65,10 @@ list_of_files = [
     "src/utils/visualization.py",
     "src/utils/metrics.py",
 
+    "src/services/__init__.py",
+    "src/services/run_manifest.py",
+    "src/services/artifact_writer.py",
+
     "scripts/run_pipeline.py",
     "scripts/evaluate.py",
     "scripts/label_helper.py",

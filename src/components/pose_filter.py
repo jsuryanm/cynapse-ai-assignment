@@ -126,30 +126,30 @@ class PoseFilter(BaseFilter):
                             reason=reason,
                             metrics=metrics)
     
-if __name__ == "__main__":
-    quality_filter = QualityFilter(QualityThresholds())
-    detector = PersonDetector(PersonDetectionThresholds())
-    pose = PoseFilter(PoseThresholds())
-    loader = ImageLoader()
+# if __name__ == "__main__":
+#     quality_filter = QualityFilter(QualityThresholds())
+#     detector = PersonDetector(PersonDetectionThresholds())
+#     pose = PoseFilter(PoseThresholds())
+#     loader = ImageLoader()
 
-    outcomes: Counter[str] = Counter()
+#     outcomes: Counter[str] = Counter()
 
-    for path in sorted(IMAGES_DIR.glob("*.png")):
-        crop = loader.load(path)
+#     for path in sorted(IMAGES_DIR.glob("*.png")):
+#         crop = loader.load(path)
 
-        if not quality_filter.apply(crop).passed: 
-            outcomes["rejected_at_quality"] += 1 
-            continue
+#         if not quality_filter.apply(crop).passed: 
+#             outcomes["rejected_at_quality"] += 1 
+#             continue
 
-        if not detector.apply(crop).passed:
-            outcomes["rejected_at_detection"] += 1
-            continue
+#         if not detector.apply(crop).passed:
+#             outcomes["rejected_at_detection"] += 1
+#             continue
         
-        if not pose.apply(crop).passed:
-            outcomes["rejected_at_pose"] += 1 
-            continue
+#         if not pose.apply(crop).passed:
+#             outcomes["rejected_at_pose"] += 1 
+#             continue
         
-        outcomes["passed_all"] += 1 
+#         outcomes["passed_all"] += 1 
 
-    for outcome,count in outcomes.most_common():
-        logger.info(f"{outcome}:{count}") 
+#     for outcome,count in outcomes.most_common():
+#         logger.info(f"{outcome}:{count}") 

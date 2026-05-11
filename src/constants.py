@@ -6,6 +6,7 @@ DATA_DIR = PROJECT_ROOT_DIR / "data"
 IMAGES_DIR = DATA_DIR / "raw"
 DEFAULT_CONFIG_PATH = PROJECT_ROOT_DIR / "config" / "config.yaml"
 DEFAULT_THRESHOLDS_PATH = PROJECT_ROOT_DIR / "config" / "thresholds.yaml"
+DATA_INTERIM = PROJECT_ROOT_DIR / "data" / "interim"
 
 
 HEAD_KPT_INDICES = (0,1,2,3,4)
