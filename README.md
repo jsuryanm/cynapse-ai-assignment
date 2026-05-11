@@ -160,7 +160,7 @@ making every accept/reject decision auditable.
 ### 2. Clone and install
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/jsuryanm/cynapse-ai-assignment.git
 cd cynapse-ai-assignment
 
 # install mivolo
