@@ -1,8 +1,8 @@
 # Computer Vision Dataset Curation Pipeline
 
 A production-style, multi-stage inference pipeline that automatically curates a
-noisy person-crop dataset down to crops that meet strict downstream training
-requirements — **without** using any Vision-Language Models.
+noisy person-crop dataset down to crops that meet strict downstream 
+requirements.
 
 
 ---
@@ -462,20 +462,6 @@ uv run python scripts/evaluate.py --run-id 2026-05-11_143022
 
 ---
 
-## Testing
-
-```bash
-uv run pytest -q
-```
-
-Unit tests live in `tests/`, one file per component. Tests cover:
-
-- Threshold boundary conditions (just-above, just-below).
-- Malformed inputs (empty arrays, single-channel images).
-- Determinism (same input → same `StageResult`).
-
----
-
 ## Design Decisions & Tradeoffs
 
 ### 1. Why a cascade rather than parallel filters?
@@ -570,42 +556,22 @@ strictness on the full-body and face-visibility requirements.
 
 ---
 
-## VLM Compliance
-
-This project uses **no Vision-Language Models**.
-
-All vision models used are conventional CV / unimodal:
-
-| Stage | Model | Type |
-|---|---|---|
-| 1 | YOLOv11m | Object detector |
-| 2 | YOLOv11m-pose | Pose / keypoint estimator |
-| 3 | InsightFace SCRFD | Face detector |
-| 4 | MiVOLO v2 | Age estimator (CNN+Transformer hybrid for vision only) |
-| 5 | CLIP ViT-B/32 | Image-text *similarity* model — used only as a zero-shot classifier with fixed prompts. No autoregressive generation, no captioning, no VQA. |
-
-No queries are made to any external LLM/VLM API (OpenAI, Gemini, Claude,
-InternVL, Qwen-VL, etc.).
-
----
-
 ## Tech Stack
 
 | Layer | Choice | Why |
 |---|---|---|
 | Language | Python 3.12 | Modern typing, performance |
 | Package manager | uv | 10–100× faster than pip; deterministic lockfile |
-| Deep learning | PyTorch 2.11 (CUDA 12.8) | Industry standard |
+| Deep learning | PyTorch 2.11 (CUDA 12.8) | Deep Learning framework |
 | Detection / Pose | Ultralytics YOLOv11 | Best speed/accuracy at this scale |
 | Face | InsightFace (SCRFD) | Production-grade face detector |
-| Zero-shot | open_clip_torch | Reproducible CLIP weights |
+| Transformers | MiVOLOv2,openai/clip-vit-base-patch32 | Reproducible CLIP weights and MiVOLO |
 | Config | pydantic v2 + PyYAML | Typed validation, fail-fast |
 | CLI | Typer + Rich | Type-driven CLI, pretty output |
 | Logging | loguru | Zero-config, rotating, structured |
 | Data | pandas + pyarrow | Parquet I/O, fast filtering |
 | Imaging | opencv-python-headless + Pillow | Headless-friendly for servers |
-| Quality | ruff + pytest + mypy (light) | Modern fast linting / testing |
-| Visualisation | matplotlib + supervision | EDA + bbox/keypoint overlays |
+| Visualisation | matplotlib | Plotting Data Distribution and images |
 
 ---
 
