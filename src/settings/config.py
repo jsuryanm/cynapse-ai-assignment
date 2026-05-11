@@ -94,7 +94,7 @@ class AgeThresholds(BaseModel):
 
 
 class CLIPAdFilterThresholds(BaseModel):
-    similarity_margin: float = 0.05
+    similarity_margin: float = 0.02
     real_person_prompts: list[str]
     ad_prompts: list[str]
 

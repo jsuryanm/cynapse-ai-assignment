@@ -35,16 +35,17 @@ age:
 
 # Stage 5:  CLIP zero shot/manequinn filtering
 clip_ad_filter:
-  similarity_margin: 0.05     # real_score must beat ad_score by this margin
+  similarity_margin: 0.0     # real_score must beat ad_score by this margin
   real_person_prompts:
-    - "a candid photograph of a person walking on the street"
-    - "a snapshot of a pedestrian"
-    - "a photo of a person in a public place"
-    - "a street photograph of someone"
+    - "a candid snapshot of a real person in a natural setting"
+    - "an unposed photo of a pedestrian on a city street"
+    - "a casual phone photograph of someone walking"
+    - "a real human being photographed in everyday life"
+    - "a documentary photograph of a person outdoors"
   ad_prompts:
-    - "an advertisement photo of clothing"
-    - "a mannequin in a store window display"
-    - "a clothing product photograph on a hanger"
-    - "a fashion magazine cover"
-    - "a billboard advertisement with a person"
-
+    - "a mannequin on display in a clothing store window"
+    - "a plastic mannequin wearing clothes for sale"
+    - "a fashion advertisement photographed in a studio"
+    - "a clothing store storefront with mannequin displays"
+    - "a magazine fashion shoot with professional lighting"
+    - "a retail product display photograph"
