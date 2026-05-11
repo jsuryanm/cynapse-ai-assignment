@@ -4,6 +4,9 @@ import torch
 PROJECT_ROOT_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_ROOT_DIR / "data"
 IMAGES_DIR = DATA_DIR / "raw"
+DEFAULT_CONFIG_PATH = PROJECT_ROOT_DIR / "config" / "config.yaml"
+DEFAULT_THRESHOLDS_PATH = PROJECT_ROOT_DIR / "config" / "thresholds.yaml"
+
 
 HEAD_KPT_INDICES = (0,1,2,3,4)
 SHOULDER_KPT_INDICES = (5, 6) # l_shoulder, r_shoulder

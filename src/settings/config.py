@@ -6,11 +6,10 @@ import yaml
 from pydantic import BaseModel,Field,field_validator 
 
 from src.exceptions.custom_exceptions import ConfigurationError
+from src.constants import PROJECT_ROOT_DIR,DEFAULT_CONFIG_PATH,DEFAULT_THRESHOLDS_PATH
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = PROJECT_ROOT_DIR
 
-DEFAULT_CONFIG_PATH = PROJECT_ROOT / "config" / "config.yaml"
-DEFAULT_THRESHOLDS_PATH = PROJECT_ROOT / "config" / "thresholds.yaml"
 
 class RuntimeConfig(BaseModel):
     device: str = "cuda"
@@ -95,8 +94,18 @@ class AgeThresholds(BaseModel):
 
 class CLIPAdFilterThresholds(BaseModel):
     similarity_margin: float = 0.0
-    real_person_prompts: list[str]
-    ad_prompts: list[str]
+    real_person_prompts: list[str] = ["a candid snapshot of a real person in a natural setting",
+                                      "an unposed photo of a pedestrian on a city street",
+                                      "a casual phone photograph of someone walking",
+                                      "a real human being photographed in everyday life",
+                                      "a documentary photograph of a person outdoors"]
+    
+    ad_prompts: list[str] = ["a mannequin on display in a clothing store window",
+                            "a plastic mannequin wearing clothes for sale",
+                            "a fashion advertisement photographed in a studio",
+                            "a clothing store storefront with mannequin displays",
+                            "a magazine fashion shoot with professional lighting",
+                            "a retail product display photograph"]
 
 
 class Thresholds(BaseModel):

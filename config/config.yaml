@@ -16,9 +16,9 @@ models:
   yolo_detection: "yolo11m.pt"
   yolo_pose: "yolo11m-pose.pt"
   face_detector: "buffalo_l"
-  age_estimator: "mivolo_d1"
-  clip_model: "ViT-B-32"
-  clip_pretrained: "laion2b_s34b_b79k"
+  age_estimator: "iitolstykh/mivolo_v2"
+  clip_model: "openai/clip-vit-base-patch32"
+
 
 # pipeline behaviour
 pipeline:
