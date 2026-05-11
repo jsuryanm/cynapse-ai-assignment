@@ -85,7 +85,7 @@ interface. A crop must pass *every* stage to be accepted.
         │                  (data/raw/*.png — 1147 imgs)               │
         └───────────────────────────────┬─────────────────────────────┘
                                         │
-                              dedup (perceptual hash)
+                              deduplication (perceptual hash)
                                         │
         ┌───────────────────────────────▼─────────────────────────────┐
         │  Stage 0 │ Quality Filter                              cheap│
@@ -162,6 +162,11 @@ making every accept/reject decision auditable.
 ```bash
 git clone <repo-url>
 cd cynapse-ai-assignment
+
+# install mivolo
+# Note: This does not get tracked into pyproject.toml
+uv pip install --no-deps --no-build-isolation 'mivolo @ git+https://github.com/WildChlamydia/MiVOLO.git'
+
 
 # Create a virtual env and install all locked dependencies
 uv sync
