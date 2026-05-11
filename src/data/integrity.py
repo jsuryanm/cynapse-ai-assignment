@@ -23,12 +23,17 @@ class DedupReport:
     def n_duplicate_groups(self) -> int:
         """Number of hash groups containing more than one file."""
         return len(self.duplicate_groups)
-
-    def to_dict(self) -> dict:
+    
+    def to_summary_dict(self) -> dict:
         return {"n_input": self.n_input,
                 "n_unique": self.n_unique,
                 "n_removed": self.n_removed,
-                "n_duplicate_groups": self.n_duplicate_groups,
+                "n_duplicate_groups": self.n_duplicate_groups}
+
+
+    def to_dict(self) -> dict:
+        """Full view including per-group filenames. Suitable for sidecar files."""
+        return {**self.to_summary_dict(),
                 "duplicate_groups": {
                     h[:8]: filenames
                     for h, filenames in self.duplicate_groups.items()},

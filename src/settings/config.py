@@ -27,6 +27,7 @@ class PathsConfig(BaseModel):
     """All paths are stored to the project root"""
     data_dir: Path = Path("data/raw")
     artifacts_dir: Path = Path("artifacts")
+    runs_dir: Path = Path("artifacts/runs")
     labels_dir: Path = Path("data/labels")
     models_cache: Path = Path("artifacts/models")
 
@@ -34,6 +35,7 @@ class PathsConfig(BaseModel):
         """Return a copy all relative paths"""
         return PathsConfig(data_dir=root / self.data_dir,
                            artifacts_dir=root / self.artifacts_dir,
+                           runs_dir=root / self.runs_dir,
                            labels_dir=root / self.labels_dir,
                            models_cache=root / self.models_cache)
 

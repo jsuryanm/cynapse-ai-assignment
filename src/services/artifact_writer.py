@@ -10,6 +10,7 @@ from typing import Any
 
 import pandas as pd 
 
+from src.data.integrity import DedupReport
 from src.entities.final_decision import FinalDecision
 from src.logger.custom_logger import logger 
 
@@ -92,33 +93,47 @@ def copy_log_file(log_file: Path, run_folder: Path) -> None:
     logger.info("Archived log file to {}/run.log", run_folder.name)
 
 
-def write_all_artifacts(
-    *,
-    decisions: list[FinalDecision],
-    crop_id_to_source: dict[str, Path],
-    manifest: dict[str, Any],
-    log_file: Path | None,
-    run_folder: Path,
-) -> None:
+def _write_json(payload: dict[str, Any], path: Path) -> None:
+    """Serialize a dict to a pretty-printed JSON file."""
+    with path.open("w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2, default=str)
+    logger.info("Wrote {}", path.name)
+
+
+def write_all_artifacts(*,
+                        decisions: list[FinalDecision],
+                        crop_id_to_source: dict[str, Path],
+                        manifest: dict[str, Any],
+                        config_snapshot: dict[str, Any],
+                        environment: dict[str, Any],
+                        dedup_report: DedupReport,
+                        log_file: Path | None,
+                        run_folder: Path) -> None:
     """Public entry point. Writes all artifacts for one run.
 
     Layout produced:
         <run_folder>/
-            manifest.json
-            decisions.parquet
+            manifest.json             slim summary
+            config_snapshot.json      exact thresholds used
+            environment.json          python/platform/library versions + data_dir
+            dedup_groups.json         full duplicate-group listing
+            decisions.parquet         per-crop decisions
             run.log
-            kept/
-                <kept crop files>
+            kept/                     <kept crop files>
             samples/
-                rejected_at_<stage>/
-                    <sample crop files>
+                rejected_at_<stage>/  <sample crop files>
     """
     _ensure_folder(run_folder)
 
     write_decisions_parquet(decisions, run_folder / "decisions.parquet")
     copy_kept_crops(decisions, crop_id_to_source, run_folder / "kept")
     copy_rejected_samples(decisions, crop_id_to_source, run_folder / "samples")
-    write_manifest(manifest, run_folder / "manifest.json")
+
+    _write_json(manifest, run_folder / "manifest.json")
+    _write_json(config_snapshot, run_folder / "config_snapshot.json")
+    _write_json(environment, run_folder / "environment.json")
+    _write_json(dedup_report.to_dict(), run_folder / "dedup_groups.json")
+
     if log_file is not None:
         copy_log_file(log_file, run_folder)
 

@@ -8,6 +8,7 @@ runtime:
 paths:
   data_dir: "data/raw"
   artifacts_dir: "artifacts"
+  runs_dir: "artifacts/runs"
   labels_dir: "data/labels"
   models_cache: "artifacts/models"
 
