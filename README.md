@@ -74,6 +74,14 @@ Install dependencies:
 uv sync
 ```
 
+Install MiVOLO separately from GitHub. It cannot be installed reliably with a
+plain `pip install mivolo`, so use the same no-dependency/no-build-isolation
+install used during development:
+
+```bash
+uv pip install --no-deps --no-build-isolation "mivolo @ git+https://github.com/WildChlamydia/MiVOLO.git"
+```
+
 Place the dataset images under:
 
 ```text
