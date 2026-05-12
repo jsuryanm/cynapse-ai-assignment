@@ -1,11 +1,3 @@
-# scripts/evaluate.py
-"""Evaluate a pipeline run against ground-truth labels.
-
-Usage:
-    uv run python scripts/evaluate.py
-    uv run python scripts/evaluate.py --run-folder artifacts/runs/2026-05-11_142525
-    uv run python scripts/evaluate.py --labels data/labels/validation.csv
-"""
 from __future__ import annotations
 
 import json

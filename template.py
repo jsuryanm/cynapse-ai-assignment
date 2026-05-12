@@ -17,14 +17,11 @@ list_of_files = [
     "data/README.md",
     
     "notebooks/01_eda.ipynb",
-    "notebooks/02_stage0_quality.ipynb",
     "notebooks/03_stage1_person_detection.ipynb",
     "notebooks/04_stage2_pose_fullbody.ipynb",
     "notebooks/05_stage3_face_visibility.ipynb",
     "notebooks/06_stage4_age_filter.ipynb",
     "notebooks/07_stage5_ad_clip.ipynb",
-    "notebooks/08_threshold_tuning.ipynb",
-    "notebooks/09_final_evaluation.ipynb",
 
     "src/__init__.py",
     "src/constants.py",
@@ -75,21 +72,9 @@ list_of_files = [
     "scripts/evaluate.py",
     "scripts/label_helper.py",
 
-    "backend/__init__.py",
-    "backend/schemas.py",
-    "backend/main.py",
-
-    "frontend/__init__.py",
-    "frontend/app.py",
-
     "tests/__init__.py",
     "tests/conftest.py",
     "tests/test_quality_filter.py",
-    "tests/test_person_detector.py",
-    "tests/test_pose_filter.py",
-    "tests/test_face_filter.py",
-    "tests/test_age_filter.py",
-    "tests/test_ad_filter.py",
 
     "requirements.txt",]
 

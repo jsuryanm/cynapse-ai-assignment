@@ -8,10 +8,10 @@ from src.entities.stage_results import StageResult
 
 class FinalDecision(BaseModel):
     """Pipeline's final verdict on a single crop.
-    Aggregates all StageResults for one crop and provides downstream analysis
+    Stores all StageResults for one image and provides downstream analysis
     args:
     crop_id: image 
-    source_path: original str path of image
+    source_path: image path
     kept: True if it passes every stage
     rejected: name of stage where image is rejected
     stage_results: All stages in execution order
@@ -44,5 +44,6 @@ class FinalDecision(BaseModel):
 
             for metric_name,metric_value in result.metrics.items():
                 record[f"{prefix}_{metric_name}"] = metric_value
+            
         
         return record 

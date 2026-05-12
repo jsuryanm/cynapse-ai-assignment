@@ -25,7 +25,7 @@ from src.settings.config import (AgeThresholds,
 
 from src.exceptions.custom_exceptions import ModelLoadError
 from src.logger.custom_logger import logger
-from src.constants import IMAGES_DIR,AGE_MODEL_ID
+from src.constants import IMAGES_DIR,AGE_MODEL_ID,DEVICE
 
 class AgeFilter(BaseFilter):
     """Predicting age and gender with MiVOLO v2, reject minors"""
@@ -35,7 +35,7 @@ class AgeFilter(BaseFilter):
                  thresholds: AgeThresholds,
                  device: str | None = None) -> None:
         self.thresholds = thresholds
-        self.device = device or "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = device or DEVICE 
         logger.info(f"Loading MiVOLOv2 {AGE_MODEL_ID} on {self.device}")
 
         try:

@@ -3,22 +3,18 @@ from __future__ import annotations
 from pydantic import BaseModel,ConfigDict,Field 
 
 class StageResult(BaseModel):
-    """The verdict of one filter applied to one crop.
-
-    Every `BaseFilter.apply(crop)` returns a `StageResult`. The pipeline
-    collects these into a `FinalDecision`.
-
+    """Stores the execution result of components 
     Attributes
     ----------
-    stage_name : str
-        Stage identifier — must match the filter's `name` property.
-        E.g. "quality", "person_detection", "pose", "face", "age", "ad_filter".
-    crop_id : str
-        Mirrors `Crop.crop_id` so a `StageResult` is meaningful in isolation.
+    stage_name : str, which stage (component) we are currently running  
+    (e.g, quality check,yolo person detection,etc)
+    crop_id : str, image name
     passed : bool
-        True if the crop satisfied this stage's criteria.
+        True if the image satisfied this stage's criteria.
     reason : str
-    Short, human-readable explanation. E.g. "blur_variance=45.2 < threshold=80.0".
+        Short, human-readable explanation. 
+        If img passes stage then reason=ok,
+        else reason for failing is given from component.
     metrics : dict[str, float] E.g. {"blur_variance": 45.2, "brightness": 120.4, ...}.
     elapsed_ms : float
     """

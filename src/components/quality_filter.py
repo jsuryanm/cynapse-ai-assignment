@@ -14,7 +14,7 @@ from src.constants import IMAGES_DIR
 from src.logger.custom_logger import logger 
 
 class QualityFilter(BaseFilter):
-    """Stage 0: coarse image quality filter using CV techniques"""
+    """Stage 0: image quality check filter using CV techniques"""
     name = "quality"
 
     def __init__(self, thresholds: QualityThresholds) -> None:
@@ -23,7 +23,8 @@ class QualityFilter(BaseFilter):
     def _apply(self,crop: Crop) -> StageResult:
         width = crop.width
         height = crop.height 
-        aspect = height / width
+        aspect = height / width 
+        # measures how tall an object is 
 
         gray = cv2.cvtColor(crop.image,cv2.COLOR_RGB2GRAY)
         brightness = float(gray.mean())

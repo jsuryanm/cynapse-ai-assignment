@@ -9,7 +9,7 @@ import numpy as np
 # slots only allows the attributes defined in class 
 @dataclass(slots=True)
 class Crop:
-    """A crop is an input unit every filter consumes. 
+    """A crop is an input image that every layer in component consumes. 
     It bundles loaded image as np array with metadata 
     that downstream stages record may reference"""
 

@@ -14,7 +14,7 @@ from src.entities.crop import Crop
 from src.entities.stage_results import StageResult
 
 from src.utils.io import ImageLoader 
-from src.constants import IMAGES_DIR 
+from src.constants import IMAGES_DIR,DEVICE 
 
 from src.exceptions.custom_exceptions import ModelLoadError
 from src.logger.custom_logger import logger 
@@ -36,7 +36,7 @@ class PersonDetector(BaseFilter):
                  device: str | None = None) -> None:
         
         self.thresholds = thresholds
-        self.device = device or "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = device or DEVICE
         logger.info(f"Loading YOLO weights from {model_path} on device {self.device}")
 
         try:
@@ -60,7 +60,8 @@ class PersonDetector(BaseFilter):
         if n_raw > 0:
             xyxyn = boxes.xyxyn.cpu().numpy()
             confs = boxes.conf.cpu().numpy()
-            areas = (xyxyn[:,2] - xyxyn[:,0]) * (xyxyn[:,3] - xyxyn[:,1])
+            areas = (xyxyn[:,2] - xyxyn[:,0]) * (xyxyn[:,3] - xyxyn[:,1]) 
+            # we use xyxyn instead of xyxy since its more better for area filtering (easier to communicate it)
             # area ratio per detection (x2-x1)*(y2-y1)
         else:
             xyxyn = confs = areas = None

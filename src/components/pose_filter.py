@@ -16,7 +16,8 @@ from src.constants import (HEAD_KPT_INDICES,
                            HIP_KPT_INDICES,
                            KNEE_KPT_INDICES,
                            SHOULDER_KPT_INDICES,
-                           IMAGES_DIR)
+                           IMAGES_DIR,
+                           DEVICE)
 # COCO keypoint group indices 
 
 from src.exceptions.custom_exceptions import ModelLoadError
@@ -28,9 +29,9 @@ from src.settings.config import (PoseThresholds,
 
 
 class PoseFilter(BaseFilter):
-    """Full Body Verification with YOLO pose Keypoints. 
-    Rejects crops where dominant person is not visible enough
-    keypoints in head,torso and leg groups."""
+    """Full Body Verification with YOLO pose. 
+    Rejects crops where keypoints are not visible enough
+    specifically the (head,shoulder,hip and knee)"""
 
     name = "pose"
 
@@ -40,7 +41,7 @@ class PoseFilter(BaseFilter):
                  device: str | None = None):
         
         self.thresholds = thresholds 
-        self.device = device or "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = device or DEVICE
         logger.info(f"Loading YOLO pose model from {model_path} to {self.device}")
 
         try:

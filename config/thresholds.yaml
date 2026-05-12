@@ -1,7 +1,7 @@
 
 # Stage 0:  Image quality (OpenCV)
 quality:
-  min_aspect_ratio: 1.3 # width/height ratio - a person crop is tall 
+  min_aspect_ratio: 1.3 # height/width ratio - a person crop is tall 
   min_width: 80
   min_height: 150 
   min_brightness: 15.0 # mean lumiance 0-255 reject near black 

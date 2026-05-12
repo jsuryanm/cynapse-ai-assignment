@@ -44,9 +44,8 @@ class ModelsConfig(BaseModel):
     yolo_detection: str = "yolo11m.pt"
     yolo_pose: str = "yolo11m-pose.pt"
     face_detector: str = "buffalo_l"
-    age_estimator: str = "mivolo_d1"
-    clip_model: str = "ViT-B-32"
-    clip_pretrained: str = "laion2b_s34b_b79k"
+    age_estimator: str = "iitolstykh/mivolo_v2"
+    clip_model: str = "openai/clip-vit-base-patch32"
 
 class PipelineRunConfig(BaseModel):
     save_rejected: bool = True 
