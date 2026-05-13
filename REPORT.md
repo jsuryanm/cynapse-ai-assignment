@@ -91,12 +91,12 @@ flowchart LR
 
 Three principles drive every choice in this section.
 
-**Cheap before expensive.** The cheapest checks come first. Quality is pure
+**Cheap before expensive.** The cheapest checks come first. The first quality check by 
 OpenCV and runs in well under a millisecond per crop, removing 21.7% of
 inputs (217 of 1,001) before any deep learning model is loaded. The expensive
 deep-learning models then run only on the survivors.
 
-**One stage, one question.** Each stage maps to exactly one of the four
+**One stage, one requirement.** Each stage maps to exactly one of the four
 target requirements (plus the two upstream sanity checks). This is why every
 rejected crop has a single `rejected_at_stage` value, and it is what makes
 the per-violation analysis in Section 3 possible. A fused single-score
@@ -110,41 +110,54 @@ on a small custom dataset.
 
 #### Stage details
 
-**1. Quality (OpenCV heuristics).** Six simple image statistics: minimum
-width and height, minimum aspect ratio (a standing person is taller than
-wide), a brightness band that excludes near-black and near-white frames,
-and a Laplacian-variance sharpness measure for motion blur. A deep model
-would add latency without adding signal at this stage.
+**1. Quality (OpenCV heuristics).** This stage removes visually unusable images .
 
-**2. Person detection (YOLO11m).** A fast, well-tested general object
-detector with a favourable speed/accuracy trade-off for curation passes.
-Rejects crops with no person at confidence ≥ 0.5, a person box covering
-less than 40% of the crop, or more than five overlapping detections (a
-sign of a crowded scene rather than a clean single-person crop).
+  - Minimum size checks `(min_width=80, min_height=150` ensure the image contains enough visual detail.
+  - Aspect ratio threshold `(min_aspect_ratio=1.3)` ensures the crop roughly matches the shape of a standing human body.
+  - Brightness thresholds `(15–240)` reject extremely dark or overexposed images.
+  - Blur detection `(min_blur_variance=10)` uses Laplacian variance to detect blurry or out-of-focus images.
 
-**3. Full-body check (YOLO11m-pose).** A general detector confirms a
-person is present; it cannot confirm the *full body* is visible. Pose
-keypoints test the requirement directly: at least one head keypoint (nose,
-eyes, ears), both shoulders, both hips, and both knees must each be
-visible at confidence ≥ 0.5.
+**2. Person detection (YOLO11m).** This stage verifies whether image contains a clear visible person. It removes images, without persons, crowded scenes containing multiple overlapping people. The detector applies:
+  - Person confidence threshold `(min_confidence=0.5)` ensures that the detection is reliable. 
+  - Bounding box area `(min_bbox_area=0.4)` threshold ensures the detected person occupies atleast 40% space in crop.
+  - Maximum person limit `(max_persons=5)` rejects crowded scenes with many overlapping people. 
+  
 
-**4. Face visibility (SCRFD, via InsightFace).** Face detection is
-specialised — SCRFD handles small, side-facing, and partially occluded
-faces that general object detectors often miss. Requires a face with
-confidence ≥ 0.6 covering ≥ 0.5% of the crop, with all five facial
-landmarks inside the detected box.
+**3. Full-body check (YOLO11m-pose).** This stage ensures the person’s full body is visible using pose keypoints.
+  - Keypoint confidence threshold `(keypoint_confidence=0.5)` ensures detected joints are reliable.
+  - Requires at least:
+    - 1 visible head keypoint `(min_head_kpts=1)`
+    - 2 shoulder keypoints `(min_shoulder_kpts=2)`
+    - 2 hip keypoints `(min_hip_kpts=2)`
+    - 2 knee keypoints `(min_knee_kpts=2)`
+  - Images missing important body regions are rejected as partial-body crops.
 
-**5. Age filter (MiVOLOv2).** Uses both face and body context, which is
-more robust than face-only age models when the face is small or angled.
-Rejects crops with predicted age below 16 or gender confidence below 0.6.
+**4. Face visibility (SCRFD, via InsightFace).** This stage verifies that a clear and visible face is present.
 
-**6. Advertisement filter (openai/clip-vit-base-patch32, zero-shot).** Advertisement vs.
-real-person is a semantic distinction. Rather than train a classifier on
-hand-labelled ad data, the stage scores each image against two prompt
-banks — five "real candid photograph" prompts and six "advertisement,
-mannequin, studio shoot" prompts — and rejects crops whose advertisement
-similarity exceeds their real-person similarity. New ad styles can be
-covered by adding a prompt, with no retraining.
+  - Face detection confidence `(min_detection_confidence=0.6)` ensures reliable face detection.
+  - Minimum face area ratio `(min_face_area_ratio=0.005)` ensures the face is large enough for analysis.
+  - Landmark validation `(require_all_landmarks_in_bbox=true)` ensures all facial landmarks lie within the detected face box.
+
+  - Images with hidden, occluded, or extremely small faces are rejected.
+
+**5. Age filter (MiVOLOv2).** This stage removes images predicted to contain young children.
+
+  - Minimum age threshold `(min_age=16)` rejects crops predicted to depict minors.
+  - Gender-confidence threshold `(min_gender_confidence=0.6)` acts as a reliability check for the model prediction.
+  - Uses both facial and body information for more robust age estimation.
+
+**6. Advertisement filter (openai/clip-vit-base-patch32, zero-shot).** This stage removes advertisements, mannequins, and studio-style promotional images.
+
+  - CLIP compares the image against:
+    - Real-person prompts (e.g. candid street photos, casual human photographs)
+
+    - Advertisement prompts (e.g. mannequins, fashion shoots, retail displays)
+
+  - If advertisement similarity exceeds real-person similarity (similarity_margin=0.0), the image is rejected.
+
+  - This zero-shot approach allows semantic filtering without training a custom classifier.
+
+
 
 #### Two design choices worth flagging
 
@@ -328,7 +341,7 @@ Listed in roughly decreasing order of expected impact.
   borderline categories (`minor`, mild `face_hidden`, mild blur) where
   inter-rater disagreement is most likely.
 
-## 6. Conclusion
+## 5. Conclusion
 
 This project provides an automated curation pipeline for noisy person-crop
 datasets. On a 1,001-crop run, the pipeline keeps 117 crops in ~50 seconds
