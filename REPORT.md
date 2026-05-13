@@ -231,7 +231,7 @@ Five secondary metrics are also reported for completeness:
 
 ### 3.2 Results
 
-![Overall metrics](artifacts\runs\2026-05-12_204240\final_evaluation_plots\overall_metrics.png)
+![Overall metrics](artifacts/runs/2026-05-12_204240/final_evaluation_plots/overall_metrics.png)
 
 | Metric                       | Value      |
 | ---------------------------- | ---------- |
@@ -241,7 +241,7 @@ Five secondary metrics are also reported for completeness:
 | F1 (keep)                    | 66.67%     |
 | **Coverage (reject recall)** | **96.72%** |
 
-![Confusion matrix](artifacts\runs\2026-05-12_204240\final_evaluation_plots\confusion_matrix.png)
+![Confusion matrix](artifacts/runs/2026-05-12_204240/final_evaluation_plots/confusion_matrix.png)
 
 | Outcome                                 | Count |
 | --------------------------------------- | ----: |
@@ -250,7 +250,7 @@ Five secondary metrics are also reported for completeness:
 | True negatives (correctly rejected)     |   177 |
 | False positives (invalid crop leaked)   |     6 |
 
-![Per-violation coverage](artifacts\runs\2026-05-12_204240\final_evaluation_plots\per_violation_coverage.png)
+![Per-violation coverage](artifacts/runs/2026-05-12_204240/final_evaluation_plots/per_violation_coverage.png)
 
 | Violation type   | Labelled | Rejected | Coverage  |
 | ---------------- | -------: | -------: | --------: |
