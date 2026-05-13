@@ -55,24 +55,8 @@ Coverage measures the costly error class directly.
 
 The pipeline is designed as a sequential filtering system, where simple and computationally cheap checks run first, followed by using deep-learning models for filtering only when necessary. This early-exit design improves efficiency because invalid crops are discarded as soon as a failure condition is detected.
 
-```mermaid
-flowchart LR
-    A["Raw crops<br/>1,147 PNGs"] --> B["MD5 deduplication<br/>1,001 unique crops"]
-    B --> C["1. Quality filter<br/>OpenCV checks"]
-    C --> D["2. Person detection<br/>YOLO11m"]
-    D --> E["3. Full-body check<br/>YOLO11m-pose"]
-    E --> F["4. Face visibility<br/>InsightFace SCRFD"]
-    F --> G["5. Age filter<br/>MiVOLOv2"]
-    G --> H["6. Advertisement filter<br/>CLIP zero-shot"]
-    H --> I["Kept crops<br/>117"]
+![Pipeline Workflow](images/project-workflow.png)
 
-    C -->|fail| R["Rejected crop<br/>stage recorded"]
-    D -->|fail| R
-    E -->|fail| R
-    F -->|fail| R
-    G -->|fail| R
-    H -->|fail| R
-```
 
 | # | Stage              | Model                  | Rejects crops that…                                              |
 | - | ------------------ | ---------------------- | ---------------------------------------------------------------- |
