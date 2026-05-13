@@ -57,16 +57,6 @@ The pipeline is designed as a sequential filtering system, where simple and comp
 
 ![Pipeline Workflow](images/project-workflow.png)
 
-
-| # | Stage              | Model                  | Rejects crops that…                                              |
-| - | ------------------ | ---------------------- | ---------------------------------------------------------------- |
-| 1 | Quality            | OpenCV heuristics      | are too small, too dark, overexposed, blurry, or mis-shaped      |
-| 2 | Person detection   | YOLO11m                | contain no confident person, a tiny person, or a crowded scene   |
-| 3 | Full-body check    | YOLO11m-pose           | are missing head, shoulder, hip, or knee keypoints               |
-| 4 | Face visibility    | InsightFace SCRFD      | have no reliable face inside the person box                      |
-| 5 | Age filter         | MiVOLOv2               | are predicted to depict a minor (age < 16)                       |
-| 6 | Advertisement      | CLIP                   | match advertisement / mannequin prompts more than real-person prompts |
-
 #### Design principles
 
 Three principles drive every choice in this section.
