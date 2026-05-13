@@ -205,5 +205,5 @@ crop (991),False,no_person,
 crop (994),False,advertisement,
 crop (998),False,blurry,
 crop (1006),false,minor,
-crop (162),false,minor
+crop (162),false,minor,
 
