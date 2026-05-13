@@ -33,7 +33,7 @@ are written to a Parquet file so the full run is auditable after the fact.
 The primary evaluation metric is **coverage**, also referred to as the recall
 on the reject class. Coverage answers a single question:
 
-> Of the images that should be removed, what fraction did the pipeline
+> For all the images that should be removed, what fraction did the pipeline
 > successfully remove?
 
 For a worked example, suppose a validation set contains 100 invalid images.
