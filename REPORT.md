@@ -153,7 +153,7 @@ landmarks inside the detected box.
 more robust than face-only age models when the face is small or angled.
 Rejects crops with predicted age below 16 or gender confidence below 0.6.
 
-**6. Advertisement filter (CLIP ViT-B/32, zero-shot).** Advertisement vs.
+**6. Advertisement filter (openai/clip-vit-base-patch32, zero-shot).** Advertisement vs.
 real-person is a semantic distinction. Rather than train a classifier on
 hand-labelled ad data, the stage scores each image against two prompt
 banks — five "real candid photograph" prompts and six "advertisement,
@@ -380,55 +380,3 @@ pretrained models handle person detection, pose, face visibility, age, and
 advertisement filtering in turn. The most pressing weakness is age
 filtering on side profiles, which Section 5 outlines a concrete path to
 address.
-
-## Bibliography
-
-[1] Ultralytics. *YOLO11 Documentation*. https://docs.ultralytics.com/
-
-[2] J. Guo, J. Deng, A. Lattas, and S. Zafeiriou. "Sample and Computation
-Redistribution for Efficient Face Detection." *arXiv:2105.04714*, 2021.
-
-[3] M. Kuprashevich and I. Tolstykh. "MiVOLO: Multi-input Transformer for
-Age and Gender Estimation." *arXiv:2307.04616*, 2023.
-
-[4] A. Radford et al. "Learning Transferable Visual Models From Natural
-Language Supervision." *Proceedings of ICML*, 2021.
-
-[5] R. J. Mooney. "Project Report Format." *CS 391L Machine Learning*,
-University of Texas at Austin.
-
-## Reproducibility
-
-The reference run can be reproduced from this repository.
-
-**Environment.** Python 3.12, PyTorch 2.11.0 with CUDA 12.8, Ultralytics
-8.4.47, InsightFace 0.7.3, Transformers 5.8.0. The full environment is
-captured in `artifacts/runs/2026-05-12_204240/environment.json`.
-
-**Commands.**
-
-```bash
-# 1. Install dependencies
-uv sync
-
-# 2. Place the raw dataset
-#    data/raw/*.png
-
-# 3. Run the curation cascade
-python scripts/run_pipeline.py
-
-# 4. Evaluate against the labelled validation set
-python scripts/evaluate.py --run-folder artifacts/runs/2026-05-12_204240
-```
-
-**Key artifacts produced.**
-
-| File                                                                   | Contents                                                              |
-| ---------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `artifacts/runs/2026-05-12_204240/manifest.json`                       | Counts, timing, and per-stage statistics for the run.                  |
-| `artifacts/runs/2026-05-12_204240/config_snapshot.json`                | Exact thresholds used by the run.                                      |
-| `artifacts/runs/2026-05-12_204240/decisions.parquet`                   | One row per crop with stage-by-stage metrics.                          |
-| `artifacts/runs/2026-05-12_204240/evaluation.json`                     | Overall and per-violation evaluation metrics.                          |
-| `artifacts/runs/2026-05-12_204240/run.log`                             | Archived per-run loguru log.                                           |
-| `notebooks/08_final_evaluation.ipynb`                                  | Re-runs evaluation and regenerates the figures in Section 3.2.         |
-| `config/config.yaml`, `config/thresholds.yaml`                         | Source-of-truth configuration files (validated by pydantic at load).   |
