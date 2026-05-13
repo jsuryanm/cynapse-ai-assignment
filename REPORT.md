@@ -2,32 +2,17 @@
 
 ## 1. Introduction
 
-Computer vision systems that work with images of people depend on the quality
-of their training data. In practice, raw image collections are noisy: a
-non-trivial fraction of crops are blurry, contain no person at all, show only
-part of the body, or come from advertisements, mannequins, and product
-displays. Reviewing each crop by hand is slow, expensive, and inconsistent
-between annotators, and does not scale to the dataset sizes that modern
+Modern AI applications such as surveillance, retail analytics, and autonomous systems rely on high-quality person datasets for accurate computer vision model training. However, large-scale datasets are often noisy and contain incomplete body crops, invisible faces, advertisement images, and unsuitable age groups. Reviewing each crop by hand is slow, expensive, and inconsistent between annotators, and does not scale to the dataset sizes that modern
 training pipelines require.
 
-This project builds an automated curation pipeline for person crops. The
+This project builds an automated curation pipeline for person body crops. The
 pipeline keeps an image only when it satisfies all four target requirements:
 
 - the crop contains a **full-body** person,
-- the **face is visible** from the front or in profile,
+- the **face is visible** from the front or side profile view,
 - the crop shows a **real person** rather than an advertisement or mannequin,
 - the person is a **teenager or adult**, not a young child.
 
-The final pipeline reaches **96.72% coverage** on a hand-labelled validation
-set of 207 crops, clearing the 90% target with margin. In practical terms,
-the system catches roughly 97 out of every 100 invalid crops before they
-enter the curated dataset, and does so in approximately 50 seconds on a
-single consumer GPU.
-
-The remainder of this report defines the task and algorithm (Section 2),
-presents the evaluation methodology and results (Section 3), positions the
-work against related approaches (Section 4), discusses limitations and
-proposed next steps (Section 5), and concludes (Section 6).
 
 ## 2. Problem Definition and Algorithm
 
@@ -37,10 +22,10 @@ proposed next steps (Section 5), and concludes (Section 6).
 
 **Output.** Two groups of images and a structured decision record per crop:
 
-- `kept` — crops satisfying all four requirements,
-- `rejected` — crops removed by the first stage that failed.
+- `kept` — images that satisfy all four requirements,
+- `rejected` — images that are removed by the first stage that failed.
 
-Each decision record contains the crop identifier, the final keep/reject
+Each decision record contains an image id `(crop_id)`, the final keep/reject
 verdict, the stage that produced a rejection (if any), the numeric metrics
 computed at every stage the crop visited, and per-stage timing. These records
 are written to a Parquet file so the full run is auditable after the fact.
@@ -100,7 +85,7 @@ flowchart LR
 | 3 | Full-body check    | YOLO11m-pose           | are missing head, shoulder, hip, or knee keypoints               |
 | 4 | Face visibility    | InsightFace SCRFD      | have no reliable face inside the person box                      |
 | 5 | Age filter         | MiVOLOv2               | are predicted to depict a minor (age < 16)                       |
-| 6 | Advertisement      | CLIP (ViT-B/32)        | match advertisement / mannequin prompts more than real-person prompts |
+| 6 | Advertisement      | CLIP                   | match advertisement / mannequin prompts more than real-person prompts |
 
 #### Design principles
 
@@ -108,7 +93,7 @@ Three principles drive every choice in this section.
 
 **Cheap before expensive.** The cheapest checks come first. Quality is pure
 OpenCV and runs in well under a millisecond per crop, removing 21.7% of
-inputs (217 of 1,001) before any GPU model is loaded. The expensive
+inputs (217 of 1,001) before any deep learning model is loaded. The expensive
 deep-learning models then run only on the survivors.
 
 **One stage, one question.** Each stage maps to exactly one of the four
@@ -177,11 +162,12 @@ Exact-byte MD5 hashing catches these. Perceptual hashing would also collapse
 visually-similar but distinct photographs, which is not what we want — two
 different photos of the same person are still distinct training examples.
 
-#### End-to-end example
+#### How the pipeline works
 
-A dark crop is rejected at the quality stage and never touches a GPU model.
-A crop with no detectable person is rejected by YOLO11m and never reaches
-pose or age estimation. A high-quality, full-body crop with a visible face
+- A dark crop is rejected at the quality stage and never reaches the next stage which is YOLO detection. A crop with no detectable person is rejected by YOLO11m and never reaches
+pose or age estimation. 
+
+- A high-quality, full-body crop with a visible face
 reaches MiVOLOv2 and CLIP, because only at that point are age and
 advertisement checks meaningful.
 
@@ -300,33 +286,7 @@ also imply that on a dataset of cleaner advertisements (editorial
 photography of real models, for example), the CLIP stage would become the
 primary defence rather than a backstop.
 
-## 4. Related Work
-
-This project combines existing pretrained models rather than proposing a new
-one. The contribution is the system design — the choice and ordering of
-stages, the threshold configuration, and the evaluation methodology — not a
-new model. The components and their lineage are summarised below.
-
-| Area                          | Representative prior work                | Role in this project                                                          |
-| ----------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------- |
-| One-stage object detection    | YOLO family [1]                          | YOLO11m is used as a fast person-presence gate.                               |
-| Human pose estimation         | COCO keypoint-based pose models          | YOLO11m-pose checks visibility of head, shoulders, hips, and knees.           |
-| Face detection                | SCRFD [2], InsightFace                   | SCRFD via the `buffalo_l` bundle detects faces inside person crops.           |
-| Age estimation                | MiVOLO [3]                               | MiVOLOv2 estimates age using both face and body context.                      |
-| Vision-language matching      | CLIP [4]                                 | CLIP scores real-person vs. advertisement prompt banks zero-shot.             |
-
-Two design choices distinguish this work from a single-model or
-end-to-end-trained alternative. First, the use of **specialised pretrained
-models for specialised checks** keeps each stage independently interpretable
-and tunable, which would not be the case for a single multi-task classifier.
-Second, the **CLIP-based zero-shot advertisement filter** intentionally
-avoids the cost of curating a labelled advertisement dataset — directly
-addressing the brief's preference for solutions that minimise human
-labelling. The trade-off is a less in-distribution-precise advertisement
-classifier than a trained one would be; Section 3.3 discusses where this
-shows up in the results.
-
-## 5. Limitations and Future Work
+## 4. Limitations and Future Work
 
 Listed in roughly decreasing order of expected impact.
 
