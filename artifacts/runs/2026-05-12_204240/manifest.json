@@ -1,0 +1,65 @@
+{
+  "run_id": "2026-05-12_204240",
+  "started_at": "2026-05-12 12:42:40+00:00",
+  "finished_at": "2026-05-12 12:43:30+00:00",
+  "elapsed_seconds": 50.0,
+  "dedup": {
+    "n_input": 1147,
+    "n_unique": 1001,
+    "n_removed": 146,
+    "n_duplicate_groups": 133
+  },
+  "outcomes": {
+    "rejected_at_face": 109,
+    "rejected_at_quality": 217,
+    "rejected_at_person_detection": 323,
+    "rejected_at_pose": 199,
+    "passed_all": 117,
+    "rejected_at_ad_filter": 25,
+    "rejected_at_age": 11
+  },
+  "stage_stats": [
+    {
+      "stage": "quality",
+      "n_in": 1001,
+      "n_passed": 784,
+      "n_rejected": 217,
+      "rejection_rate": 0.2168
+    },
+    {
+      "stage": "person_detection",
+      "n_in": 784,
+      "n_passed": 461,
+      "n_rejected": 323,
+      "rejection_rate": 0.412
+    },
+    {
+      "stage": "pose",
+      "n_in": 461,
+      "n_passed": 262,
+      "n_rejected": 199,
+      "rejection_rate": 0.4317
+    },
+    {
+      "stage": "face",
+      "n_in": 262,
+      "n_passed": 153,
+      "n_rejected": 109,
+      "rejection_rate": 0.416
+    },
+    {
+      "stage": "age",
+      "n_in": 153,
+      "n_passed": 142,
+      "n_rejected": 11,
+      "rejection_rate": 0.0719
+    },
+    {
+      "stage": "ad_filter",
+      "n_in": 142,
+      "n_passed": 117,
+      "n_rejected": 25,
+      "rejection_rate": 0.1761
+    }
+  ]
+}

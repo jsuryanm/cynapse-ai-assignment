@@ -217,12 +217,19 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-data/labels
-data/raw
 
-artifacts/
+artifacts/eda 
+artifacts/label_review 
+artifacts/runs/2026-05-12_204240/kept
+artifacts/runs/2026-05-12_204240/samples
+artifacts/runs/2026-05-12_204240/tmp/*
+artifacts/runs/2026-05-12_204240/environment.json
+
 
 *.pt
 *.docx
 
-data/interim/*
+data/raw/*
+data/labels/to_label
+data/labels/validation_backup.csv
+

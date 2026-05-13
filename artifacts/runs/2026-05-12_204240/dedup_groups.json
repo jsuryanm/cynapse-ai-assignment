@@ -1,0 +1,553 @@
+{
+  "n_input": 1147,
+  "n_unique": 1001,
+  "n_removed": 146,
+  "n_duplicate_groups": 133,
+  "duplicate_groups": {
+    "f9faed1b": [
+      "crop (1).png",
+      "crop (2).png"
+    ],
+    "f5d60f42": [
+      "crop (1019).png",
+      "crop (1020).png"
+    ],
+    "be8f4868": [
+      "crop (1026).png",
+      "crop (1027).png"
+    ],
+    "4116e79d": [
+      "crop (1028).png",
+      "crop (1029).png"
+    ],
+    "1a5c6bbc": [
+      "crop (1031).png",
+      "crop (1032).png"
+    ],
+    "e3f72f62": [
+      "crop (1035).png",
+      "crop (1036).png"
+    ],
+    "877a276f": [
+      "crop (104).png",
+      "crop (105).png"
+    ],
+    "8626c93b": [
+      "crop (1050).png",
+      "crop (1051).png"
+    ],
+    "963a402d": [
+      "crop (1075).png",
+      "crop (1076).png"
+    ],
+    "0434be18": [
+      "crop (1099).png",
+      "crop (1100).png"
+    ],
+    "e28f12a4": [
+      "crop (1101).png",
+      "crop (1102).png"
+    ],
+    "24a4b036": [
+      "crop (1127).png",
+      "crop (1128).png"
+    ],
+    "0f994f56": [
+      "crop (119).png",
+      "crop (120).png"
+    ],
+    "ee787392": [
+      "crop (121).png",
+      "crop (122).png"
+    ],
+    "ccb6815b": [
+      "crop (129).png",
+      "crop (130).png"
+    ],
+    "bfb21fc8": [
+      "crop (132).png",
+      "crop (133).png"
+    ],
+    "ca3fb6dd": [
+      "crop (14).png",
+      "crop (15).png"
+    ],
+    "94c5fa72": [
+      "crop (148).png",
+      "crop (149).png"
+    ],
+    "1fa7a0a0": [
+      "crop (159).png",
+      "crop (160).png"
+    ],
+    "cad4aa27": [
+      "crop (168).png",
+      "crop (169).png"
+    ],
+    "cd9f146f": [
+      "crop (200).png",
+      "crop (201).png"
+    ],
+    "ad6bd01d": [
+      "crop (210).png",
+      "crop (211).png"
+    ],
+    "531e1767": [
+      "crop (242).png",
+      "crop (243).png"
+    ],
+    "1879d457": [
+      "crop (254).png",
+      "crop (255).png"
+    ],
+    "0344695b": [
+      "crop (266).png",
+      "crop (267).png"
+    ],
+    "b28217e9": [
+      "crop (27).png",
+      "crop (28).png"
+    ],
+    "878b980a": [
+      "crop (276).png",
+      "crop (277).png"
+    ],
+    "1ac51899": [
+      "crop (279).png",
+      "crop (280).png"
+    ],
+    "81572de2": [
+      "crop (285).png",
+      "crop (286).png"
+    ],
+    "c7c279d6": [
+      "crop (316).png",
+      "crop (317).png"
+    ],
+    "002e1ceb": [
+      "crop (355).png",
+      "crop (356).png"
+    ],
+    "755d0950": [
+      "crop (385).png",
+      "crop (386).png"
+    ],
+    "e12ed3fc": [
+      "crop (395).png",
+      "crop (396).png"
+    ],
+    "8d23b0e7": [
+      "crop (398).png",
+      "crop (399).png"
+    ],
+    "b606aaf4": [
+      "crop (401).png",
+      "crop (402).png"
+    ],
+    "46645404": [
+      "crop (41).png",
+      "crop (42).png"
+    ],
+    "a4b8d1b5": [
+      "crop (412).png",
+      "crop (413).png"
+    ],
+    "9e882055": [
+      "crop (416).png",
+      "crop (417).png",
+      "crop (418).png"
+    ],
+    "5d3cae34": [
+      "crop (424).png",
+      "crop (425).png"
+    ],
+    "3948917d": [
+      "crop (427).png",
+      "crop (428).png"
+    ],
+    "f586d956": [
+      "crop (436).png",
+      "crop (437).png"
+    ],
+    "8771901b": [
+      "crop (440).png",
+      "crop (441).png"
+    ],
+    "77e089c2": [
+      "crop (442).png",
+      "crop (443).png"
+    ],
+    "cc9494a0": [
+      "crop (452).png",
+      "crop (453).png"
+    ],
+    "09b9a867": [
+      "crop (467).png",
+      "crop (469).png"
+    ],
+    "96068250": [
+      "crop (478).png",
+      "crop (479).png"
+    ],
+    "55497108": [
+      "crop (485).png",
+      "crop (486).png"
+    ],
+    "1a9d7cc2": [
+      "crop (548).png",
+      "crop (549).png"
+    ],
+    "f0260df5": [
+      "crop (552).png",
+      "crop (553).png"
+    ],
+    "2d35e650": [
+      "crop (557).png",
+      "crop (558).png"
+    ],
+    "d943d5ae": [
+      "crop (560).png",
+      "crop (561).png"
+    ],
+    "a9c9e0bd": [
+      "crop (564).png",
+      "crop (565).png"
+    ],
+    "ad7556f4": [
+      "crop (577).png",
+      "crop (578).png",
+      "crop (579).png"
+    ],
+    "9cd1cc31": [
+      "crop (580).png",
+      "crop (581).png",
+      "crop (582).png"
+    ],
+    "e56c6eaa": [
+      "crop (585).png",
+      "crop (586).png",
+      "crop (587).png"
+    ],
+    "7aa49d3b": [
+      "crop (589).png",
+      "crop (590).png"
+    ],
+    "c3361061": [
+      "crop (592).png",
+      "crop (593).png"
+    ],
+    "43db62cd": [
+      "crop (595).png",
+      "crop (596).png"
+    ],
+    "25769618": [
+      "crop (600).png",
+      "crop (601).png"
+    ],
+    "77826163": [
+      "crop (602).png",
+      "crop (603).png"
+    ],
+    "6150c2a7": [
+      "crop (604).png",
+      "crop (605).png"
+    ],
+    "026b8f02": [
+      "crop (608).png",
+      "crop (609).png"
+    ],
+    "74cbbdfc": [
+      "crop (612).png",
+      "crop (613).png"
+    ],
+    "6c79dd1f": [
+      "crop (615).png",
+      "crop (616).png"
+    ],
+    "307df7ae": [
+      "crop (618).png",
+      "crop (619).png"
+    ],
+    "27d1cc63": [
+      "crop (624).png",
+      "crop (625).png"
+    ],
+    "6dc60c44": [
+      "crop (627).png",
+      "crop (628).png"
+    ],
+    "976b32e4": [
+      "crop (629).png",
+      "crop (630).png"
+    ],
+    "d7cf4ab1": [
+      "crop (632).png",
+      "crop (633).png"
+    ],
+    "d1e5ed13": [
+      "crop (634).png",
+      "crop (635).png"
+    ],
+    "0fef7642": [
+      "crop (640).png",
+      "crop (641).png"
+    ],
+    "56d8857a": [
+      "crop (642).png",
+      "crop (643).png"
+    ],
+    "eb6dc934": [
+      "crop (645).png",
+      "crop (646).png"
+    ],
+    "09ef919b": [
+      "crop (648).png",
+      "crop (649).png"
+    ],
+    "1708a147": [
+      "crop (650).png",
+      "crop (651).png"
+    ],
+    "c46dcacc": [
+      "crop (653).png",
+      "crop (654).png"
+    ],
+    "91767d3c": [
+      "crop (655).png",
+      "crop (656).png"
+    ],
+    "6a5a38d1": [
+      "crop (658).png",
+      "crop (659).png"
+    ],
+    "a11886db": [
+      "crop (660).png",
+      "crop (661).png"
+    ],
+    "bcdeee23": [
+      "crop (667).png",
+      "crop (668).png"
+    ],
+    "4b425a85": [
+      "crop (669).png",
+      "crop (670).png"
+    ],
+    "79db93e7": [
+      "crop (674).png",
+      "crop (675).png"
+    ],
+    "e2806168": [
+      "crop (676).png",
+      "crop (677).png"
+    ],
+    "a1e81409": [
+      "crop (681).png",
+      "crop (682).png"
+    ],
+    "e70207a6": [
+      "crop (684).png",
+      "crop (685).png"
+    ],
+    "45ac01b2": [
+      "crop (688).png",
+      "crop (689).png"
+    ],
+    "9a234513": [
+      "crop (693).png",
+      "crop (694).png"
+    ],
+    "2834eaf8": [
+      "crop (699).png",
+      "crop (700).png"
+    ],
+    "3c65bf1d": [
+      "crop (7).png",
+      "crop (8).png"
+    ],
+    "9db2d64b": [
+      "crop (704).png",
+      "crop (705).png"
+    ],
+    "3aec81c7": [
+      "crop (713).png",
+      "crop (714).png"
+    ],
+    "be364f4f": [
+      "crop (715).png",
+      "crop (716).png"
+    ],
+    "660a0a33": [
+      "crop (717).png",
+      "crop (718).png"
+    ],
+    "7aa5df7a": [
+      "crop (722).png",
+      "crop (723).png"
+    ],
+    "004bc415": [
+      "crop (724)(1).png",
+      "crop (724).png"
+    ],
+    "76d49bcc": [
+      "crop (725)(1).png",
+      "crop (725).png"
+    ],
+    "553ab305": [
+      "crop (726)(1).png",
+      "crop (726).png"
+    ],
+    "385faa51": [
+      "crop (727)(1).png",
+      "crop (727).png"
+    ],
+    "3be8b836": [
+      "crop (728)(1).png",
+      "crop (728).png",
+      "crop (729)(1).png",
+      "crop (729).png"
+    ],
+    "9e0ff73e": [
+      "crop (730)(1).png",
+      "crop (730).png",
+      "crop (731)(1).png",
+      "crop (731).png"
+    ],
+    "13d26756": [
+      "crop (732)(1).png",
+      "crop (732).png"
+    ],
+    "af245609": [
+      "crop (733)(1).png",
+      "crop (733).png"
+    ],
+    "e8a6f75e": [
+      "crop (734)(1).png",
+      "crop (734).png",
+      "crop (735)(1).png",
+      "crop (735).png"
+    ],
+    "10545250": [
+      "crop (736)(1).png",
+      "crop (736).png"
+    ],
+    "0afa605d": [
+      "crop (737)(1).png",
+      "crop (737).png",
+      "crop (738)(1).png",
+      "crop (738).png"
+    ],
+    "4b95faf0": [
+      "crop (739)(1).png",
+      "crop (739).png"
+    ],
+    "452ddff6": [
+      "crop (740).png",
+      "crop (741).png"
+    ],
+    "178ed2d5": [
+      "crop (744).png",
+      "crop (745).png"
+    ],
+    "f126695b": [
+      "crop (750).png",
+      "crop (751).png"
+    ],
+    "eb3082f1": [
+      "crop (754).png",
+      "crop (755).png"
+    ],
+    "6d036318": [
+      "crop (756).png",
+      "crop (757).png"
+    ],
+    "fa6e6083": [
+      "crop (758).png",
+      "crop (759).png"
+    ],
+    "60472ccf": [
+      "crop (761).png",
+      "crop (762).png"
+    ],
+    "0fff6378": [
+      "crop (771).png",
+      "crop (772).png"
+    ],
+    "94989594": [
+      "crop (785).png",
+      "crop (786).png"
+    ],
+    "60ef4d3f": [
+      "crop (790).png",
+      "crop (791).png"
+    ],
+    "576349f3": [
+      "crop (795).png",
+      "crop (796).png"
+    ],
+    "23a9dfd8": [
+      "crop (800).png",
+      "crop (801).png"
+    ],
+    "0ca8ac93": [
+      "crop (802).png",
+      "crop (803).png",
+      "crop (804).png"
+    ],
+    "c513a08e": [
+      "crop (812).png",
+      "crop (813).png"
+    ],
+    "4e7b4a07": [
+      "crop (821).png",
+      "crop (822).png"
+    ],
+    "0c7757bd": [
+      "crop (824).png",
+      "crop (825).png"
+    ],
+    "ccab28fd": [
+      "crop (829).png",
+      "crop (830).png"
+    ],
+    "e0272c24": [
+      "crop (837).png",
+      "crop (838).png"
+    ],
+    "ab120f33": [
+      "crop (850).png",
+      "crop (851).png"
+    ],
+    "782ca663": [
+      "crop (860).png",
+      "crop (861).png"
+    ],
+    "23869529": [
+      "crop (863).png",
+      "crop (864).png"
+    ],
+    "d1ab9bd9": [
+      "crop (865).png",
+      "crop (866).png"
+    ],
+    "1d47b82d": [
+      "crop (875).png",
+      "crop (876).png"
+    ],
+    "3fef391b": [
+      "crop (913).png",
+      "crop (914).png"
+    ],
+    "8bd7fbd1": [
+      "crop (924).png",
+      "crop (925).png"
+    ],
+    "1e630aab": [
+      "crop (96).png",
+      "crop (97).png"
+    ],
+    "5cd5baba": [
+      "crop (992).png",
+      "crop (993).png"
+    ]
+  }
+}

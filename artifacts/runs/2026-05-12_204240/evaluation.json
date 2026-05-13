@@ -1,0 +1,105 @@
+{
+  "n_labels": 207,
+  "n_decisions": 1001,
+  "n_evaluated": 207,
+  "n_unmatched_labels": 0,
+  "unmatched_label_ids": [],
+  "overall": {
+    "counts": {
+      "tp": 15,
+      "fp": 6,
+      "tn": 177,
+      "fn": 9
+    },
+    "total": 207,
+    "accuracy": 0.9275,
+    "precision_keep": 0.7143,
+    "recall_keep": 0.625,
+    "f1_keep": 0.6667,
+    "coverage": 0.9672
+  },
+  "violations": [
+    {
+      "violation": "blurry",
+      "n_labeled": 26,
+      "n_rejected": 26,
+      "coverage": 1.0,
+      "n_rejected_at_expected_stage": 17,
+      "coverage_at_expected_stage": 0.6538,
+      "stage_breakdown": {
+        "person_detection": 8,
+        "quality": 17,
+        "pose": 1
+      }
+    },
+    {
+      "violation": "advertisement",
+      "n_labeled": 40,
+      "n_rejected": 40,
+      "coverage": 1.0,
+      "n_rejected_at_expected_stage": 1,
+      "coverage_at_expected_stage": 0.025,
+      "stage_breakdown": {
+        "face": 4,
+        "pose": 13,
+        "quality": 5,
+        "person_detection": 17,
+        "ad_filter": 1
+      }
+    },
+    {
+      "violation": "no_person",
+      "n_labeled": 28,
+      "n_rejected": 28,
+      "coverage": 1.0,
+      "n_rejected_at_expected_stage": 23,
+      "coverage_at_expected_stage": 0.8214,
+      "stage_breakdown": {
+        "person_detection": 23,
+        "quality": 2,
+        "pose": 3
+      }
+    },
+    {
+      "violation": "not_full_body",
+      "n_labeled": 49,
+      "n_rejected": 48,
+      "coverage": 0.9796,
+      "n_rejected_at_expected_stage": 23,
+      "coverage_at_expected_stage": 0.4694,
+      "stage_breakdown": {
+        "pose": 23,
+        "person_detection": 8,
+        "quality": 15,
+        "age": 1,
+        "ad_filter": 1
+      }
+    },
+    {
+      "violation": "face_hidden",
+      "n_labeled": 32,
+      "n_rejected": 29,
+      "coverage": 0.9062,
+      "n_rejected_at_expected_stage": 17,
+      "coverage_at_expected_stage": 0.5312,
+      "stage_breakdown": {
+        "pose": 7,
+        "face": 17,
+        "quality": 4,
+        "person_detection": 1
+      }
+    },
+    {
+      "violation": "minor",
+      "n_labeled": 8,
+      "n_rejected": 6,
+      "coverage": 0.75,
+      "n_rejected_at_expected_stage": 5,
+      "coverage_at_expected_stage": 0.625,
+      "stage_breakdown": {
+        "age": 5,
+        "quality": 1
+      }
+    }
+  ]
+}

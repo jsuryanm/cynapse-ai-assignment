@@ -1,30 +1,47 @@
 # Person-Crop Dataset Curation Pipeline Report
 
-## 1. Problem Statement and Primary Metric
+## 1. Introduction
 
-Modern AI applications such as surveillance analytics, autonomous systems, and
-person re-identification rely on high-quality person datasets. In practice,
-large image collections are often noisy: some crops are blurry, some do not
-contain a person, some show only part of the body, and some come from
-advertisements or mannequins. Manually reviewing these images is slow,
+Modern computer vision systems need clean person datasets. In practice, raw
+image collections are noisy: some crops are blurry, some do not contain a
+person, some show only part of the body, and some come from advertisements,
+mannequins, or product displays. Manually reviewing every crop is slow,
 expensive, and difficult to scale.
 
-This project builds an automated computer vision curation pipeline that keeps
-usable full-body person crops while minimizing manual review. A crop should be
-kept only when it satisfies these requirements:
+This project builds an automated dataset curation pipeline for person crops. The
+pipeline keeps images only when they satisfy the target dataset requirements:
 
-- full-body person crops where the face is visible from the front or side,
-- real people rather than advertisements or mannequins,
-- teenagers or adults, not young children.
+- the crop contains a full-body person,
+- the face is visible from the front or side,
+- the crop shows a real person rather than an advertisement or mannequin,
+- the person is a teenager or adult, not a young child.
 
-The primary success metric is **coverage**, also called **recall on the reject
-class**. In simple terms, coverage answers:
+The main result is that the final pipeline reaches **96.72% coverage**, clearing
+the 90% target. In practical terms, the system catches most invalid crops before
+they enter the final dataset.
+
+## 2. Problem Definition and Algorithm
+
+### 2.1 Task Definition
+
+**Input.** A directory of noisy person-crop images.
+
+**Output.** Two groups of images:
+
+- `kept`: crops that satisfy all dataset requirements,
+- `rejected`: crops removed by the first failed pipeline stage.
+
+Each crop also receives a structured decision record containing whether it was
+kept, where it was rejected, stage-level metrics, and timing information.
+
+The primary evaluation metric is **coverage**, also called **recall on the
+reject class**. Coverage answers one simple question:
 
 > Of the images that should be removed, how many did the pipeline successfully
 > remove?
 
-For example, imagine a validation set with 100 bad images. If the pipeline
-rejects 95 of them and accidentally lets 5 bad images through, coverage is:
+For example, suppose a validation set contains 100 bad images. If the pipeline
+rejects 95 and accidentally lets 5 through, coverage is:
 
 ```text
 coverage = bad images correctly rejected / all bad images
@@ -32,40 +49,14 @@ coverage = bad images correctly rejected / all bad images
          = 95%
 ```
 
-This metric matters more than plain accuracy for dataset curation because the
-main risk is allowing bad images into the final training dataset. Losing some
-valid images is not ideal, but keeping invalid crops is worse because it pollutes
-the dataset.
+This metric is more important than plain accuracy for this project because the
+main risk is letting invalid images into the curated training dataset.
 
-In the final evaluation, there were 183 validation crops that should be
-rejected. The pipeline correctly rejected 177 of them:
+### 2.2 Algorithm Definition
 
-```text
-coverage = 177 / (177 + 6) = 96.72%
-```
-
-This clears the 90% target and shows that the pipeline is effective at removing
-invalid images.
-
-## 2. Pipeline Overview
-
-The system is a six-stage early-exit cascade. Each image is checked stage by
-stage. If a stage rejects the image, later stages are skipped and the rejection
-reason is recorded.
-
-| Step | Stage | Purpose | Method |
-| ---: | --- | --- | --- |
-| 0 | Deduplication | Remove exact duplicate files before inference | MD5 hash |
-| 1 | Quality | Remove very small, dark, blank, or blurry crops | OpenCV heuristics |
-| 2 | Person detection | Confirm a person is present | YOLO11m |
-| 3 | Full-body check | Confirm head, torso, hips, and knees are visible | YOLO11m-pose |
-| 4 | Face visibility | Confirm a detectable visible face | InsightFace SCRFD |
-| 5 | Age filter | Exclude likely young children | MiVOLOv2 |
-| 6 | Ad filter | Exclude ads, mannequins, and product-style images | CLIP zero-shot prompts |
-
-This design is efficient because cheap filters run first, followed by pretrained
-deep learning models. Expensive stages only run on image crops that survive
-earlier checks.
+The algorithm is an early-exit cascade. Each image moves through the stages in
+order. If one stage fails, the image is rejected immediately and later stages do
+not run.
 
 ```mermaid
 flowchart LR
@@ -86,28 +77,53 @@ flowchart LR
     H -->|fail| R
 ```
 
-The final evaluation run processed 1,001 unique crops and kept 117 crops.
+| Step | Stage | Purpose | Method |
+| ---: | --- | --- | --- |
+| 0 | Deduplication | Remove exact duplicate files before inference | MD5 hash |
+| 1 | Quality | Remove tiny, dark, overexposed, blurry, or badly shaped crops | OpenCV heuristics |
+| 2 | Person detection | Confirm a person is present and large enough | YOLO11m |
+| 3 | Full-body check | Confirm head, shoulders, hips, and knees are visible | YOLO11m-pose |
+| 4 | Face visibility | Confirm a visible face inside the person crop | InsightFace SCRFD |
+| 5 | Age filter | Exclude likely young children | MiVOLOv2 |
+| 6 | Ad filter | Exclude ads, mannequins, and product-style images | CLIP prompts |
 
-## 3. Key Design Decisions
+The stages are sequential rather than parallel. This keeps the pipeline fast:
+an obviously bad crop does not need every model. It also makes each decision
+easy to explain because every rejected crop has one `rejected_at_stage` value.
 
-| Decision | Why it was chosen |
+| Decision | Reasoning |
 | --- | --- |
-| Run stages sequentially, not in parallel | Most bad crops can be rejected early. A dark image does not need pose, age, or CLIP inference. This saves compute and gives one clear rejection reason. |
-| Use a cascade instead of one combined score | Each stage maps to one requirement: quality, person, full body, face, age, and advertisement. This makes failures easier to inspect and tune. |
-| Keep thresholds in YAML | Thresholds can be adjusted without changing code, and each run can be reproduced from saved configs. |
-| Avoid VLMs | The pipeline uses conventional CV models and CLIP, but not GPT-4V, Gemini, InternVL, Qwen-VL, or similar VLMs. |
+| Run stages sequentially | Most invalid crops can be rejected early. Running every model in parallel would waste compute on images that already failed simple checks. |
+| Use a cascade | Each stage maps to one requirement: quality, person, full body, face, age, or advertisement. This keeps the system easy to debug. |
+| Keep thresholds in YAML | Thresholds can be adjusted without changing code, and runs remain reproducible. |
+| Avoid VLMs | The system uses conventional CV models and CLIP, but not GPT-4V, Gemini, InternVL, Qwen-VL, or similar VLMs. |
 
-| Model / method | Used for | How it filters | Why this choice |
+| Model / method | Used for | Why it fits this stage | How it runs in the pipeline |
 | --- | --- | --- | --- |
-| OpenCV heuristics | Basic quality | Rejects tiny, very dark/bright, blurry, or badly shaped crops. | Fast, simple, and enough for obvious quality problems. No deep model is needed here. |
-| YOLO11m | Person detection | Rejects crops with no confident person, a tiny person box, or too many people. | Good speed/accuracy balance. Lighter than many two-stage detectors and easier to deploy than heavier detector families. |
-| YOLO11m-pose | Full-body check | Checks whether head, shoulders, hips, and knees are visible. | Keypoints directly match the full-body requirement. A normal detector can find a person, but cannot reliably prove the full body is visible. |
-| Two YOLO stages | Person first, pose second | YOLO11m first removes no-person/tiny-person crops. YOLO11m-pose only runs when keypoints are needed. | This is clearer than using pose for everything: detection answers "is there a person?", pose answers "is the full body visible?" |
-| SCRFD via InsightFace | Face visibility | Rejects crops with no face, tiny face, low-confidence face, or unreliable landmarks. | Built specifically for face detection, including small and side-facing faces. More suitable than a generic object detector for this step. |
-| MiVOLOv2 | Age filtering | Uses face and body crops, then rejects predicted ages below 16. | Age needs a specialized model. MiVOLOv2 can use both face and body context, which helps when the face is small or side-facing. |
-| CLIP | Advertisement/mannequin filtering | Compares the crop against real-person prompts and ad/mannequin prompts. Rejects when ad prompts score higher. | Allows zero-shot semantic filtering without training a custom ad classifier or labeling many ad examples. |
+| OpenCV heuristics | Basic quality | Quality failures such as very small size, extreme brightness, and blur are simple image statistics. A deep model would be unnecessary here. | Runs first on every crop and removes obvious bad inputs before GPU inference. |
+| YOLO11m | Person detection | It is a fast, practical pretrained person detector with a good speed/accuracy trade-off. Heavier detectors can also work, but are less attractive for a scalable curation pass. | Runs after quality. Rejects crops with no confident person, a tiny person box, or too many people. |
+| YOLO11m-pose | Full-body check | A normal detector can say "person", but not whether the full body is visible. Pose keypoints directly test head, shoulders, hips, and knees. | Runs only after a person is detected. Rejects crops missing required body keypoints. |
+| SCRFD via InsightFace | Face visibility | Face detection is specialized. SCRFD is lightweight and works well for small or side-facing faces, which generic object detectors may miss. | Runs after pose. Looks for a reliable face inside the detected person crop. |
+| MiVOLOv2 | Age filtering | Age needs a specialized model. MiVOLOv2 uses both face and body context, which helps when the face is small or angled. | Runs after person and face boxes are available. Rejects predicted ages below 16. |
+| CLIP | Ad/mannequin filtering | Advertisements and mannequins are semantic categories. CLIP supports zero-shot image-text matching, avoiding a custom labeled ad dataset. | Runs near the end on crops that otherwise look valid. Rejects crops closer to ad/mannequin prompts than real-person prompts. |
 
-## 4. Evaluation Setup
+**Why two YOLO models instead of only YOLO11m-pose?** YOLO11m-pose can detect
+people, so using it for both detection and pose would reduce code. I kept the
+stages separate because they answer different questions. YOLO11m is a direct
+"is there a person?" gate and removes no-person or tiny-person crops before the
+pose model is needed. YOLO11m-pose then focuses only on the harder question:
+"is enough of the body visible?" This makes the pipeline easier to inspect,
+because detection failures and full-body failures are not mixed into one stage.
+
+**Concrete example.** A dark crop is rejected at the quality stage and never
+reaches the GPU models. A crop with no person is rejected by YOLO11m and never
+reaches pose or age estimation. A high-quality full-body crop with a visible
+face reaches MiVOLOv2 and CLIP, because only then are age and ad/mannequin
+checks meaningful.
+
+## 3. Experimental Evaluation
+
+### 3.1 Methodology
 
 The final evaluation uses run `2026-05-12_204240`.
 
@@ -118,7 +134,32 @@ The final evaluation uses run `2026-05-12_204240`.
 | Labels without decisions | 0 |
 | Kept crops in full run | 117 |
 
-## 5. Results
+The 207 labeled validation crops were compared against the pipeline decisions.
+For this project, coverage is computed as:
+
+```text
+coverage = correctly rejected bad crops / all labeled bad crops
+         = 177 / (177 + 6)
+         = 96.72%
+```
+
+The validation set contains 183 crops that should be rejected and 24 crops that
+should be kept. The most important error is a bad crop leaking into the final
+dataset.
+
+Brief metric meanings:
+
+| Metric | Meaning in this project |
+| --- | --- |
+| Accuracy | Overall fraction of labeled crops classified correctly. |
+| Precision keep | Of crops the pipeline kept, how many were actually valid. |
+| Recall keep | Of valid crops, how many the pipeline successfully kept. |
+| F1 keep | Balance between keep precision and keep recall. |
+| Coverage / reject recall | Of invalid crops, how many the pipeline successfully rejected. This is the primary metric. |
+| False positive | A bad crop that leaked into the kept set. |
+| False negative | A good crop that was rejected. |
+
+### 3.2 Results
 
 ![Overall metrics](artifacts/runs/2026-05-12_204240/final_evaluation_plots/overall_metrics.png)
 
@@ -130,11 +171,6 @@ The final evaluation uses run `2026-05-12_204240`.
 | F1 keep | 66.67% |
 | **Coverage / reject recall** | **96.72%** |
 
-The pipeline clears the 90% coverage target. It is intentionally
-conservative: it rejects most bad crops, but also loses some valid crops. For a
-curation task, this is a reasonable trade-off because a smaller clean dataset is
-usually preferable to a larger noisy one.
-
 ![Confusion matrix](artifacts/runs/2026-05-12_204240/final_evaluation_plots/confusion_matrix.png)
 
 | Count | Value |
@@ -143,8 +179,6 @@ usually preferable to a larger noisy one.
 | False negatives: good crop lost | 9 |
 | True negatives: correctly rejected | 177 |
 | False positives: bad crop leaked | 6 |
-
-## 6. Coverage by Requirement Violation
 
 ![Per-violation coverage](artifacts/runs/2026-05-12_204240/final_evaluation_plots/per_violation_coverage.png)
 
@@ -157,24 +191,69 @@ usually preferable to a larger noisy one.
 | face_hidden | 32 | 29 | 90.62% |
 | minor | 8 | 6 | 75.00% |
 
-Most violation types meet or exceed 90% coverage. The weakest category is
-`minor`, with 6 of 8 labeled examples rejected. This is the main remaining
-model-risk area because age estimation is difficult for side profiles,
-low-resolution faces, and borderline teenager/adult cases.
+### 3.3 Discussion
 
-## 7. Limitations and Future Work
+The results support the main hypothesis: a staged computer vision cascade can
+remove most invalid person crops without using VLMs or training a new model.
+The pipeline is intentionally conservative. It rejects most bad crops, but it
+also loses some valid crops. For dataset curation, this is acceptable because a
+smaller clean dataset is usually more useful than a larger noisy one.
 
-- **Age filtering needs improvement.** Add a face-quality gate before age
-  inference, or ensemble MiVOLOv2 with a second age model for borderline cases.
-- **Validation labels are limited.** The 207 labels were enough to validate the
-  main target, but the minor class only has 8 examples.
-- **Inference is mostly per-crop.** Batching YOLO, SCRFD, age, and CLIP stages
-  would improve throughput.
-- **Ad filtering could be evaluated more directly.** Many ads are rejected
-  before the CLIP stage, so a CLIP-only ablation on ad-labeled crops would give
-  a cleaner measure of that stage.
+The strongest categories are blurry, advertisement, no-person, and not-full-body
+crops. The weakest category is `minor`, with 6 of 8 labeled minor examples
+rejected. This is expected because age estimation is harder for side profiles,
+small faces, and borderline teenager/adult cases.
 
-## 8. Reproducibility
+## 4. Related Work
+
+This project combines pretrained models rather than proposing a new model.
+
+| Area | Related approach | How this project uses it |
+| --- | --- | --- |
+| Object detection | YOLO-style one-stage detectors | Used for fast person detection. |
+| Pose estimation | Keypoint-based human pose models | Used to check whether the full body is visible. |
+| Face detection | SCRFD / InsightFace | Used for specialized visible-face filtering. |
+| Age estimation | MiVOLOv2 | Used for child filtering with face and body context. |
+| Zero-shot image-text matching | CLIP | Used for ad/mannequin filtering without custom training labels. |
+
+The main difference from a single-model solution is that this project uses
+specialized pretrained models for specialized checks. That makes the system
+easier to debug and easier to tune for dataset curation.
+
+## 5. Future Work
+
+- Improve age filtering with a face-quality gate or a second age model.
+- Batch YOLO, SCRFD, MiVOLOv2, and CLIP inference to increase throughput.
+- Evaluate the CLIP ad filter directly on a harder ad/mannequin subset.
+- Add a human review queue for borderline crops near stage thresholds.
+- Validate the thresholds on a second dataset to test generalization.
+
+## 6. Conclusion
+
+The pipeline provides a practical automated curation system for noisy
+person-crop datasets. It processes 1,001 unique crops, keeps 117, and reaches
+**96.72% coverage** on the labeled validation set. The main design strength is
+the sequential cascade: simple checks remove obvious failures early, while
+specialized pretrained models handle person detection, pose, face visibility,
+age, and advertisement filtering.
+
+## Bibliography
+
+[1] Ultralytics. YOLO11 model documentation.
+
+[2] Jia Guo, Jiankang Deng, Alexandros Lattas, and Stefanos Zafeiriou. "Sample
+and Computation Redistribution for Efficient Face Detection." arXiv:2105.04714.
+
+[3] Maksim Kuprashevich and Irina Tolstykh. "MiVOLO: Multi-input Transformer for
+Age and Gender Estimation." arXiv:2307.04616.
+
+[4] Alec Radford et al. "Learning Transferable Visual Models From Natural
+Language Supervision." ICML 2021.
+
+[5] Raymond J. Mooney. "Project Report Format." CS 391L Machine Learning,
+University of Texas at Austin.
+
+## Reproducibility
 
 To reproduce the final run and evaluation:
 
