@@ -90,22 +90,73 @@ The final evaluation run processed 1,001 unique crops and kept 117 crops.
 
 ## 3. Key Design Decisions
 
-**Early-exit cascade.** A cascade is better than scoring every crop with every
-model because many bad crops can be removed cheaply. For example, low-quality
-images do not need pose, age, or CLIP inference.
+**Sequential cascade instead of parallel components.** The pipeline does not
+run every model on every crop. It runs stages sequentially and stops as soon as
+one stage rejects the image. This is faster and easier to debug. A black or tiny
+crop does not need YOLO, SCRFD, MiVOLO, or CLIP inference. A crop with no person
+does not need pose or age estimation. Sequential execution also gives one clear
+rejection reason, such as `quality`, `pose`, or `face`, instead of a confusing
+set of competing model scores.
 
-**Pose keypoints for full-body detection.** Bounding-box shape is not reliable:
-a sitting person, leaning person, or cropped portrait can all confuse aspect
-ratio rules. Keypoints directly test whether important body regions are visible.
+**YOLO11m for person detection.** The person detection stage only answers one
+question: "Is there a real person occupying enough of this crop?" YOLO11m is a
+good fit because it is a modern, fast, pretrained object detector with a COCO
+`person` class already available. Popular alternatives such as Faster R-CNN,
+DETR-style detectors, or larger YOLO variants can also detect people, but they
+are heavier for this use case. Smaller detectors would be faster, but may miss
+harder crops. YOLO11m gives a practical middle ground: strong person detection,
+simple deployment through Ultralytics, GPU support, and enough speed for a
+curation pipeline.
 
-**CLIP for ad detection.** The project minimizes manual labeling by using
-zero-shot prompts instead of training a new advertisement classifier. A trained
-classifier would need many labeled examples, while CLIP can compare the crop
-against "real person" and "advertisement / mannequin" prompts directly.
+**Separate YOLO11m and YOLO11m-pose stages.** It is true that YOLO11m-pose also
+detects people, so the pipeline could have skipped the separate detection model
+and used pose for both detection and keypoints. I kept them separate because
+they serve different jobs. The detector is a cheaper gate that removes crops
+with no person or tiny person boxes before the pose model runs. The pose model
+is then reserved for crops where pose information is actually needed. This makes
+the decision logic clearer: detection decides "person present", while pose
+decides "full body visible". It adds some code, but it improves interpretability
+and keeps each stage responsible for one requirement.
 
-**No VLMs.** The pipeline uses object detection, pose estimation, face
-detection, age estimation, OpenCV checks, and CLIP. It does not use GPT-4V,
-Gemini, InternVL, Qwen-VL, or similar VLMs.
+**YOLO11m-pose for full-body verification.** The full-body requirement is not
+well captured by bounding-box aspect ratio. A tall crop can still miss knees,
+and a sitting or leaning person can have an unusual box shape. YOLO11m-pose
+stands out because it gives COCO body keypoints, letting the pipeline directly
+check whether the head, shoulders, hips, and knees are visible. Generic object
+detectors can say "person", but they cannot reliably say "full body is visible"
+without keypoints.
+
+**SCRFD through InsightFace for face visibility.** Face visibility is a
+specialized task, so the pipeline uses a specialized face detector rather than
+asking YOLO to detect faces. SCRFD is lightweight, fast, and robust on small or
+side-facing faces, which are common in person crops. Through InsightFace, it
+also returns detection confidence and facial landmarks. The pipeline uses those
+signals to reject crops with no face, a very tiny face, or unreliable landmarks.
+This is better for this task than a generic face classifier because the pipeline
+needs a precise visible-face check inside the detected person crop.
+
+**MiVOLOv2 for age filtering.** Age is not something the detector, pose model,
+or face detector can infer. MiVOLOv2 is used because it is designed for visual
+age estimation and can use both face and body crops. That matters here because
+some faces are small, side-facing, or partially low quality. The pipeline first
+waits until person and face boxes are available, then gives MiVOLOv2 the face
+and body regions and rejects crops with predicted age below 16. This stage is
+the weakest part of the system, but it is still more suitable than simple face
+size rules or a generic image classifier.
+
+**CLIP for advertisement and mannequin filtering.** Advertisement detection is
+semantic: the image may contain a person-like subject, but still be a mannequin,
+retail display, or fashion advertisement. Training a custom ad classifier would
+require many labeled examples. CLIP stands out because it supports zero-shot
+image-text matching. The pipeline compares each crop against "real person"
+prompts and "advertisement / mannequin" prompts, then rejects crops where the ad
+prompts score higher. This keeps the system flexible and minimizes manual
+labeling.
+
+**No VLMs.** The pipeline uses conventional CV models and pretrained
+vision-only or image-text models: YOLO, SCRFD, MiVOLOv2, OpenCV checks, and
+CLIP. It does not use GPT-4V, Gemini, InternVL, Qwen-VL, or similar
+Vision-Language Models.
 
 **Typed configuration.** Paths, model names, and thresholds are stored in YAML
 and validated with pydantic. This keeps tuning explicit and makes each run
