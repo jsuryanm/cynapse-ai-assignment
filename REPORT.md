@@ -53,11 +53,7 @@ Coverage measures the costly error class directly.
 
 ### 2.2 Algorithm Definition
 
-The algorithm is a **six-stage early-exit cascade**. Each image moves through
-the stages in order, and the first stage to fail produces an immediate
-rejection — the remaining stages do not run for that crop. A short
-deduplication step at the front removes exact-duplicate files before any
-inference begins.
+The pipeline is designed as a sequential filtering system, where simple and computationally cheap checks run first, followed by using deep-learning models for filtering only when necessary. This early-exit design improves efficiency because invalid crops are discarded as soon as a failure condition is detected.
 
 ```mermaid
 flowchart LR
