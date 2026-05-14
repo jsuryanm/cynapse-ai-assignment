@@ -313,13 +313,4 @@ Listed in roughly decreasing order of expected impact.
 
 ## 5. Conclusion
 
-This project provides an automated curation pipeline for noisy person-crop
-datasets. On a 1,001-crop run, the pipeline keeps 117 crops in ~50 seconds
-on a single consumer GPU and reaches **96.72% coverage** against a
-hand-labelled validation set of 207 crops, clearing the 90% target with
-margin. The core design strength is the early-exit cascade: cheap heuristic
-checks remove obvious failures before any GPU model runs, while specialised
-pretrained models handle person detection, pose, face visibility, age, and
-advertisement filtering in turn. The most pressing weakness is age
-filtering on side profiles, which Section 5 outlines a concrete path to
-address.
+This project presents an automated dataset curation pipeline for noisy person-crop image datasets, combining lightweight computer vision heuristics checks with pretrained deep learning models for an efficient stage filtering architecture. The pipeline performs quality filtering, person detection, full-body verification, face validation, age estimation, and advertisement filtering using pretrained models such as YOLOv11,InsightFace SCRFD, MiVOLOv2, and CLIP. On a run of 1,001 unique crops, the system retained 117 high-quality samples in approximately 50 seconds on a single consumer GPU while achieving 96.72% coverage on a hand-labeled validation set of 207. The pipeline’s main strengths are its scalability, modular design, and ability to significantly reduce manual dataset cleaning effort while maintaining strong filtering accuracy and interpretability. 
