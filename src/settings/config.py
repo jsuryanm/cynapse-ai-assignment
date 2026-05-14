@@ -39,7 +39,6 @@ class PathsConfig(BaseModel):
                            labels_dir=root / self.labels_dir,
                            models_cache=root / self.models_cache)
 
-# config
 class ModelsConfig(BaseModel):
     yolo_detection: str = "yolo11m.pt"
     yolo_pose: str = "yolo11m-pose.pt"
@@ -59,7 +58,6 @@ class AppConfig(BaseModel):
     models: ModelsConfig = Field(default_factory=ModelsConfig)
     pipeline: PipelineRunConfig = Field(default_factory=PipelineRunConfig)
 
-# thresholds
 class QualityThresholds(BaseModel):
     min_aspect_ratio: float = 1.3
     min_width: int = 80
@@ -139,7 +137,8 @@ def _load_yaml(path: Path) -> dict:
     return data
 
 def load_app_config(path: Path | None = None) -> AppConfig:
-    """Load and validate config.yaml"""
+    """Load and validate config.yaml using Pydantic.
+    Ensures paths, model settings are correctly structured"""
     config_path = path or DEFAULT_CONFIG_PATH
     raw = _load_yaml(config_path)
     
@@ -152,6 +151,7 @@ def load_app_config(path: Path | None = None) -> AppConfig:
     return config
 
 def load_thresholds(path: Path | None = None) -> Thresholds:
+    """Loads threshold.yaml into Thresholds pydantic class."""
     thresholds_path = path or DEFAULT_THRESHOLDS_PATH
     raw = _load_yaml(thresholds_path)
     
@@ -160,9 +160,3 @@ def load_thresholds(path: Path | None = None) -> Thresholds:
     except Exception as e:
         raise ConfigurationError(f"Validation failed for {thresholds_path}: {e}",
                                  config_path=thresholds_path) from e
-    
-# if __name__ == "__main__":
-#     config = load_app_config()
-#     print(config)
-#     thresholds = load_thresholds()
-#     print(thresholds) 
