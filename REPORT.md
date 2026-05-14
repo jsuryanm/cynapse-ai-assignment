@@ -51,7 +51,7 @@ dataset can degrade any downstream model trained on it, while accidentally
 rejecting a valid crop is cheap to recover from when raw input is plentiful.
 Coverage measures the costly error class directly.
 
-### 2.2 Algorithm Definition
+### 2.2 Pipeline design and workflow structure
 
 The pipeline is designed as a sequential filtering system, where simple and computationally cheap checks run first, followed by using deep-learning models for filtering only when necessary. This early-exit design improves efficiency because invalid crops are discarded as soon as a failure condition is detected.
 
