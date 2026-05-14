@@ -88,7 +88,7 @@ The evaluator writes `evaluation.json` into the run folder.
 
 ### 3. For analysing project metrics
 
-The notebook `notebooks/08_final_evaluation.ipynb` re-runs the evaluator,
+The notebook `notebooks/07_final_evaluation.ipynb` re-runs the evaluator,
 loads `evaluation.json`, and saves four plots into
 `<run_folder>/final_evaluation_plots/`:
 

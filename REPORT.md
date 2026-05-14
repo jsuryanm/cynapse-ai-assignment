@@ -233,7 +233,7 @@ Five secondary metrics are also reported for completeness:
 ### 3.3 Discussion
 
 The headline result supports the central hypothesis of the project: a
-staged cascade of pretrained CV models, with no VLM and no model training,
+staged pipeline of pretrained CV models, without VLM and model training,
 can remove the large majority of invalid person crops while remaining fast
 and interpretable. Five of the six violation categories sit at or above the
 90% target, and four reach 100% on this validation set.
