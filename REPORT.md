@@ -299,18 +299,8 @@ Listed in roughly decreasing order of expected impact.
   of human review would add the most signal per minute. The current
   pipeline makes a hard decision on every crop.
 
-- **Validate threshold generalisation on a second dataset.** Every numeric
-  threshold was tuned against this single noisy dataset. The
-  keypoint-visibility logic and prompt design were chosen to generalise
-  rather than overfit, but generalisation remains an empirical claim until
-  tested on independent data.
 
-- **Strengthen ground truth.** The 207 validation labels were authored by a
-  single annotator. A production deployment should at minimum use
-  double-annotation with adjudication for disagreements, particularly for
-  borderline categories (`minor`, mild `face_hidden`, mild blur) where
-  inter-rater disagreement is most likely.
 
 ## 5. Conclusion
 
-This project presents an automated dataset curation pipeline for noisy person-crop image datasets, combining lightweight computer vision heuristics checks with pretrained deep learning models for an efficient stage filtering architecture. The pipeline performs quality filtering, person detection, full-body verification, face validation, age estimation, and advertisement filtering using pretrained models such as YOLOv11,InsightFace SCRFD, MiVOLOv2, and CLIP. On a run of 1,001 unique crops, the system retained 117 high-quality samples in approximately 50 seconds on a single consumer GPU while achieving 96.72% coverage on a labeled validation set of 207 images. The pipeline’s main strengths are its scalability, modular design, and ability to significantly reduce manual dataset cleaning effort while maintaining strong filtering accuracy and interpretability. 
+This project presents an automated dataset curation pipeline for noisy person-crop image datasets, combining lightweight computer vision heuristics checks with pretrained deep learning models for an efficient stage filtering architecture. The pipeline performs deduplication, quality filtering, person detection, full-body verification, face validation, age estimation, and advertisement filtering using pretrained models such as YOLOv11,InsightFace SCRFD, MiVOLOv2, and CLIP. On a run of 1,001 unique crops, the system retained 117 high-quality samples in approximately 50 seconds on a single consumer GPU while achieving 96.72% coverage on a labeled validation set of 207 images. The pipeline’s main strengths are its scalability, modular design, and ability to significantly reduce manual dataset cleaning effort while maintaining strong filtering accuracy and interpretability. 
