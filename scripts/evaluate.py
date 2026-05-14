@@ -74,14 +74,12 @@ def _print_violations(result: EvaluationResult) -> None:
 
     for v in result.violations:
         breakdown = ", ".join(f"{stage}:{n}" for stage, n in v.stage_breakdown.items())
-        table.add_row(
-            v.violation,
-            str(v.n_labeled),
-            str(v.n_rejected),
-            f"{v.coverage:.2%}",
-            f"{v.coverage_at_expected_stage:.2%}",
-            breakdown or "—",
-        )
+        table.add_row(v.violation,
+                      str(v.n_labeled),
+                      str(v.n_rejected),
+                      f"{v.coverage:.2%}",
+                      f"{v.coverage_at_expected_stage:.2%}",
+                      breakdown or "—")
     console.print(table)
 
 

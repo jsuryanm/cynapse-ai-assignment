@@ -39,11 +39,7 @@ def _make_run_id() -> str:
 
 
 def _build_filters(thresholds: Thresholds) -> list[BaseFilter]:
-    """Construct the cascade in canonical order.
-
-    Order matters: cheap OpenCV checks run first so we never spend
-    YOLO/CLIP compute on crops we were going to drop anyway.
-    """
+    """Construct the pipeline in stage execution order."""
     return [
         QualityFilter(thresholds.quality),
         PersonDetector(thresholds.person_detection),
@@ -64,15 +60,13 @@ def main(
     skip_dedup: bool = typer.Option(False, help="Don't dedup input paths."),
     log_level: str = typer.Option("INFO", help="Console log level."),
 ) -> None:
-    """Run the full curation cascade."""
-    # ---------- Load typed configuration ----------
+    """Runs the full pipeline"""
+
     app_config: AppConfig = load_app_config()
     thresholds: Thresholds = load_thresholds()
 
-    # CLI flag overrides config.yaml when provided.
     effective_data_dir = data_dir.resolve() if data_dir else app_config.paths.data_dir
 
-    # ---------- Setup ----------
     run_id = _make_run_id()
     log_file = configure_logger(log_level=log_level)
     run_folder = app_config.paths.runs_dir / run_id
@@ -85,17 +79,14 @@ def main(
 
     started_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
 
-    # ---------- Enumerate + dedup ----------
     all_paths = sorted(effective_data_dir.glob("*.png"))
     logger.info("Found {} candidate files", len(all_paths))
 
     if skip_dedup:
         unique_paths = all_paths
-        dedup_report = DedupReport(
-            n_input=len(all_paths),
-            n_unique=len(all_paths),
-            duplicate_groups={},
-        )
+        dedup_report = DedupReport(n_input=len(all_paths),
+                                   n_unique=len(all_paths),
+                                   duplicate_groups={})
     else:
         unique_paths, dedup_report = deduplicate_paths(all_paths)
 
@@ -103,40 +94,34 @@ def main(
         unique_paths = unique_paths[:limit]
         logger.info("Limited to first {} crops", limit)
 
-    # ---------- Build filters ----------
     filters = _build_filters(thresholds)
     stage_order = [f.name for f in filters]
 
-    # ---------- Run cascade ----------
     pipeline = CurationPipeline(filters=filters, loader=ImageLoader())
     decisions = pipeline.run(unique_paths)
 
-    # ---------- Build manifest + write artifacts ----------
     finished_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
 
     crop_id_to_source = {p.stem: p for p in unique_paths}
 
-    manifest = build_manifest(
-        run_id=run_id,
-        started_at=started_at,
-        finished_at=finished_at,
-        dedup_report=dedup_report,
-        decisions=decisions,
-        stage_order=stage_order,
-    )
+    manifest = build_manifest(run_id=run_id,
+                              started_at=started_at,
+                              finished_at=finished_at,
+                              dedup_report=dedup_report,
+                              decisions=decisions,
+                              stage_order=stage_order)
+    
     config_snapshot = thresholds.model_dump(mode="json")
     environment = build_environment(data_dir=str(effective_data_dir))
 
-    write_all_artifacts(
-        decisions=decisions,
-        crop_id_to_source=crop_id_to_source,
-        manifest=manifest,
-        config_snapshot=config_snapshot,
-        environment=environment,
-        dedup_report=dedup_report,
-        log_file=log_file,
-        run_folder=run_folder,
-    )
+    write_all_artifacts(decisions=decisions,
+                        crop_id_to_source=crop_id_to_source,
+                        manifest=manifest,
+                        config_snapshot=config_snapshot,
+                        environment=environment,
+                        dedup_report=dedup_report,
+                        log_file=log_file,
+                        run_folder=run_folder)
 
 
     logger.info("Done. Run artifacts at: {}", run_folder)

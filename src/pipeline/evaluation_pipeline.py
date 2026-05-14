@@ -12,14 +12,12 @@ from src.entities.validation_label import ValidationLabel,ViolationReason
 from src.logger.custom_logger import logger
 from src.exceptions.custom_exceptions import ValidationError
 
-VIOLATION_TO_EXPECTED_STAGE: dict[ViolationReason, str] = {
-    ViolationReason.BLURRY: "quality",
-    ViolationReason.NO_PERSON: "person_detection",
-    ViolationReason.NOT_FULL_BODY: "pose",
-    ViolationReason.FACE_HIDDEN: "face",
-    ViolationReason.MINOR: "age",
-    ViolationReason.ADVERTISEMENT: "ad_filter",
-}
+VIOLATION_TO_EXPECTED_STAGE: dict[ViolationReason, str] = {ViolationReason.BLURRY: "quality",
+                                                           ViolationReason.NO_PERSON: "person_detection",
+                                                           ViolationReason.NOT_FULL_BODY: "pose",
+                                                           ViolationReason.FACE_HIDDEN: "face",
+                                                           ViolationReason.MINOR: "age",
+                                                           ViolationReason.ADVERTISEMENT: "ad_filter"}
 
 @dataclass(frozen=True,slots=True)
 class ConfusionMatrix:
@@ -56,8 +54,8 @@ class ConfusionMatrix:
     
     @property
     def coverage(self) -> float:
-        """Of bad crops in the validation set, what fraction did we reject?
-        This is recall-on-the-reject-class — the 90% target."""
+        """Of bad crops in the validation set, what fraction did we reject.
+        This is recall-on-the-reject-class"""
         denom = self.tn + self.fp
         return self.tn / denom if denom else 0.0
 

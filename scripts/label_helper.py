@@ -37,8 +37,6 @@ def main(
 
     rng = random.Random(seed)
     sample = sorted(rng.sample(unique_crops, n), key=lambda p: p.name)
-
-    # Copy sampled crops into a dedicated folder so the file viewer shows just these.
     to_label_dir = labels_dir / "to_label"
     if to_label_dir.exists():
         shutil.rmtree(to_label_dir)
@@ -46,16 +44,13 @@ def main(
     for crop in sample:
         shutil.copy2(crop, to_label_dir / crop.name)
 
-    # Pre-populate the CSV with crop_ids and empty label columns.
     csv_path = labels_dir / "validation.csv"
-    df = pd.DataFrame(
-        {
-            "crop_id": [c.stem for c in sample],
-            "should_keep": "",
-            "violation_reason": "",
-            "notes": "",
-        }
-    )
+    
+    df = pd.DataFrame({"crop_id": [c.stem for c in sample],
+                       "should_keep": "",
+                       "violation_reason": "",
+                       "notes": "",})
+    
     df.to_csv(csv_path, index=False)
 
     typer.echo(f"OK {n} crops copied to {to_label_dir}")
