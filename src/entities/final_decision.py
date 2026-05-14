@@ -13,7 +13,7 @@ class FinalDecision(BaseModel):
     crop_id: image 
     source_path: image path
     kept: True if it passes every stage
-    rejected: name of stage where image is rejected
+    rejected_at_stage: name of stage where image is rejected
     stage_results: All stages in execution order
     total_elapsed_ms: Sum of StagedResults execution time"""
 
@@ -37,13 +37,13 @@ class FinalDecision(BaseModel):
                                  "total_elapsed_ms":self.total_elapsed_ms}
         
         for result in self.stage_results:
-            prefix = result.stage_name
-            record[f"{prefix}_passed"] = result.passed
-            record[f"{prefix}_reason"] = result.reason
-            record[f"{prefix}_elapsed_ms"] = result.elapsed_ms
+            stage_name = result.stage_name
+            record[f"{stage_name}_passed"] = result.passed
+            record[f"{stage_name}_reason"] = result.reason
+            record[f"{stage_name}_elapsed_ms"] = result.elapsed_ms
 
             for metric_name,metric_value in result.metrics.items():
-                record[f"{prefix}_{metric_name}"] = metric_value
+                record[f"{stage_name}_{metric_name}"] = metric_value
             
         
         return record 

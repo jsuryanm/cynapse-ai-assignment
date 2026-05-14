@@ -1,4 +1,4 @@
-# Person-Crop Dataset Curation Pipeline
+# Person Dataset Curation Pipeline
 
 ## 1. Introduction
 

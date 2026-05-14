@@ -1,27 +1,15 @@
 from __future__ import annotations 
-from collections import Counter 
 
 import cv2 
 import numpy as np 
 
 from insightface.app import FaceAnalysis
 
-from src.constants import IMAGES_DIR 
 
 from src.components.base import BaseFilter
-from src.components.person_detector import PersonDetector
-from src.components.quality_filter import QualityFilter
-from src.components.pose_filter import PoseFilter
-
-from src.settings.config import (FaceThresholds,
-                                 PersonDetectionThresholds,
-                                 PoseThresholds,
-                                 QualityThresholds)
-
+from src.settings.config import FaceThresholds
 from src.entities.crop import Crop 
 from src.entities.stage_results import StageResult
-
-from src.utils.io import ImageLoader 
 from src.exceptions.custom_exceptions import ModelLoadError
 from src.logger.custom_logger import logger
 
@@ -50,7 +38,8 @@ class FaceFilter(BaseFilter):
     
     def _apply(self,crop: Crop) -> StageResult:
         img_bgr = cv2.cvtColor(crop.image,cv2.COLOR_RGB2BGR)
-        faces = self.app.get(img_bgr)
+        # detect faces
+        faces = self.app.get(img_bgr) 
         n_faces = len(faces)
 
         crop_area = float(crop.height * crop.width)
@@ -73,7 +62,8 @@ class FaceFilter(BaseFilter):
             valid_indices = list(range(len(faces)))
         
         else:
-            px1 = person_bbox_norm[0] * crop.width
+            # convert normalized coords to pixel coords
+            px1 = person_bbox_norm[0] * crop.width 
             py1 = person_bbox_norm[1] * crop.height
             px2 = person_bbox_norm[2] * crop.width
             py2 = person_bbox_norm[3] * crop.height
@@ -81,10 +71,12 @@ class FaceFilter(BaseFilter):
             valid_indices = []
 
             for i,f in enumerate(faces):
+                # compute face center 
                 cx = (f.bbox[0] + f.bbox[2]) / 2
                 cy = (f.bbox[1] + f.bbox[3]) / 2 
 
                 if px1 <= cx <= px2 and py1 <= cy <= py2:
+                    # only points that lie between face centers are accepted
                     valid_indices.append(i)
         
         if not valid_indices:
@@ -150,37 +142,3 @@ class FaceFilter(BaseFilter):
                            passed=passed,
                            reason=reason,
                            metrics=metrics)
-
-# if __name__ == "__main__":
-#     quality_filter =  QualityFilter(QualityThresholds())
-#     detector = PersonDetector(PersonDetectionThresholds())
-#     pose = PoseFilter(PoseThresholds())
-#     face = FaceFilter(FaceThresholds())
-
-#     loader = ImageLoader()
-
-#     outcomes: Counter[str] = Counter()
-
-#     for path in sorted(IMAGES_DIR.glob("*.png")):
-#         crop = loader.load(path)
-
-#         if not quality_filter.apply(crop).passed:
-#             outcomes['rejected_at_quality'] += 1 
-#             continue 
-
-#         if not detector.apply(crop).passed:
-#             outcomes['rejected_at_detector'] += 1 
-#             continue
-
-#         if not pose.apply(crop).passed:
-#             outcomes['rejected_at_pose'] += 1 
-#             continue 
-
-#         if not face.apply(crop).passed:
-#             outcomes['rejected_at_face'] += 1 
-#             continue
-
-#         outcomes['passed_all'] += 1 
-    
-#     for outcome,count in outcomes.most_common():
-#         logger.info(f"{outcome}:{count}")

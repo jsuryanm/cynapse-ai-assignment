@@ -9,8 +9,7 @@ from src.exceptions.custom_exceptions import StageExecutionError
 from src.logger.custom_logger import logger
 
 class BaseFilter(ABC):
-    """Abstract Base Class for every pipeline. 
-    Subclasses implement _appy(crop) with their domain logic.
+    """Subclasses implement _appy(crop) with their domain logic.
     apply(crop) wrapper handles timing, logging and exceptions"""
 
     name: str = ""

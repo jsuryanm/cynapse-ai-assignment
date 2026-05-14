@@ -12,26 +12,14 @@ import torch
 from torch.nn import functional as F 
 from transformers import CLIPModel,CLIPProcessor
 
-from src.settings.config import (PoseThresholds,
-                                 QualityThresholds,
-                                 PersonDetectionThresholds,
-                                 AgeThresholds,
-                                 FaceThresholds,
-                                 CLIPAdFilterThresholds)
+from src.settings.config import CLIPAdFilterThresholds
 
-from src.constants import CLIP_MODEL_ID,DEVICE,IMAGES_DIR
+from src.constants import CLIP_MODEL_ID,DEVICE
 
 from src.components.base import BaseFilter
-from src.components.quality_filter import QualityFilter
-from src.components.person_detector import PersonDetector
-from src.components.pose_filter import PoseFilter
-from src.components.face_filter import FaceFilter
-from src.components.age_filter import AgeFilter
-
 from src.entities.crop import Crop 
 from src.entities.stage_results import StageResult 
 
-from src.utils.io import ImageLoader
 from src.exceptions.custom_exceptions import ModelLoadError
 from src.logger.custom_logger import logger 
 
@@ -126,46 +114,3 @@ class AdFilter(BaseFilter):
                            passed=passed,
                            reason=reason,
                            metrics=metrics)
-
-# if __name__ == "__main__":
-#     qf = QualityFilter(QualityThresholds())
-#     detector = PersonDetector(PersonDetectionThresholds())
-#     pose = PoseFilter(PoseThresholds())
-#     face = FaceFilter(FaceThresholds())
-#     age = AgeFilter(AgeThresholds())
-#     ad = AdFilter(CLIPAdFilterThresholds())
-#     loader = ImageLoader() 
-
-#     outcomes: Counter[str] = Counter()
-
-#     for path in sorted(IMAGES_DIR.glob("*.png")):
-#         crop = loader.load(path)
-
-#         if not qf.apply(crop).passed:
-#             outcomes["rejected_at_quality"] += 1
-#             continue
-
-#         if not detector.apply(crop).passed:
-#             outcomes["rejected_at_detection"] += 1
-#             continue
-
-#         if not pose.apply(crop).passed:
-#             outcomes["rejected_at_pose"] += 1
-#             continue
-
-#         if not face.apply(crop).passed:
-#             outcomes["rejected_at_face"] += 1
-#             continue
-
-#         if not age.apply(crop).passed:
-#             outcomes["rejected_at_age"] += 1
-#             continue
-
-#         if not ad.apply(crop).passed:
-#             outcomes["rejected_at_ad"] += 1
-#             continue
-
-#         outcomes["passed_all"] += 1
-
-#     for outcome, count in outcomes.most_common():
-#         logger.info(" {} : {}", outcome, count)

@@ -1,32 +1,22 @@
 from __future__ import annotations 
 from collections import Counter 
 
-import torch 
 from ultralytics import YOLO 
 
 from src.components.base import BaseFilter
-from src.components.quality_filter import QualityFilter
-from src.components.person_detector import PersonDetector
-
 from src.entities.crop import Crop 
 from src.entities.stage_results import StageResult
-from src.utils.io import ImageLoader
 
 from src.constants import (HEAD_KPT_INDICES,
                            HIP_KPT_INDICES,
                            KNEE_KPT_INDICES,
                            SHOULDER_KPT_INDICES,
-                           IMAGES_DIR,
                            DEVICE)
-# COCO keypoint group indices 
 
 from src.exceptions.custom_exceptions import ModelLoadError
 from src.logger.custom_logger import logger 
 
-from src.settings.config import (PoseThresholds,
-                                 PersonDetectionThresholds,
-                                 QualityThresholds)
-
+from src.settings.config import PoseThresholds
 
 class PoseFilter(BaseFilter):
     """Full Body Verification with YOLO pose. 
@@ -126,31 +116,3 @@ class PoseFilter(BaseFilter):
                             passed=passed,
                             reason=reason,
                             metrics=metrics)
-    
-# if __name__ == "__main__":
-#     quality_filter = QualityFilter(QualityThresholds())
-#     detector = PersonDetector(PersonDetectionThresholds())
-#     pose = PoseFilter(PoseThresholds())
-#     loader = ImageLoader()
-
-#     outcomes: Counter[str] = Counter()
-
-#     for path in sorted(IMAGES_DIR.glob("*.png")):
-#         crop = loader.load(path)
-
-#         if not quality_filter.apply(crop).passed: 
-#             outcomes["rejected_at_quality"] += 1 
-#             continue
-
-#         if not detector.apply(crop).passed:
-#             outcomes["rejected_at_detection"] += 1
-#             continue
-        
-#         if not pose.apply(crop).passed:
-#             outcomes["rejected_at_pose"] += 1 
-#             continue
-        
-#         outcomes["passed_all"] += 1 
-
-#     for outcome,count in outcomes.most_common():
-#         logger.info(f"{outcome}:{count}") 

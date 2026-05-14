@@ -1,5 +1,4 @@
 from __future__ import annotations
-from collections import Counter
 
 import cv2 
 import torch 
@@ -8,24 +7,16 @@ from transformers import (AutoConfig,
                           AutoModelForImageClassification)
 
 from src.components.base import BaseFilter
-from src.components.quality_filter import QualityFilter
-from src.components.person_detector import PersonDetector
-from src.components.pose_filter import PoseFilter
-from src.components.face_filter import FaceFilter
+
 
 from src.entities.crop import Crop 
 from src.entities.stage_results import StageResult
-from src.utils.io import ImageLoader
 
-from src.settings.config import (AgeThresholds,
-                                 QualityThresholds,
-                                 PoseThresholds,
-                                 FaceThresholds,
-                                 PersonDetectionThresholds)
+from src.settings.config import AgeThresholds
 
 from src.exceptions.custom_exceptions import ModelLoadError
 from src.logger.custom_logger import logger
-from src.constants import IMAGES_DIR,AGE_MODEL_ID,DEVICE
+from src.constants import AGE_MODEL_ID,DEVICE
 
 class AgeFilter(BaseFilter):
     """Predicting age and gender with MiVOLO v2, reject minors"""
@@ -170,39 +161,3 @@ class AgeFilter(BaseFilter):
                            passed=passed,
                            reason=reason,
                            metrics=metrics)
-
-# if __name__ == "__main__":
-    
-#     quality_filter = QualityFilter(QualityThresholds())
-#     detector = PersonDetector(PersonDetectionThresholds())
-#     pose = PoseFilter(PoseThresholds())
-#     face = FaceFilter(FaceThresholds())
-#     age = AgeFilter(AgeThresholds())
-#     loader = ImageLoader()
-
-    
-#     outcomes: Counter[str] = Counter()
-
-#     for path in sorted(IMAGES_DIR.glob("*.png")):
-#         crop = loader.load(path)
-
-#         if not quality_filter.apply(crop).passed:
-#             outcomes["rejected_at_quality"] += 1
-#             continue
-#         if not detector.apply(crop).passed:
-#             outcomes["rejected_at_detection"] += 1
-#             continue
-#         if not pose.apply(crop).passed:
-#             outcomes["rejected_at_pose"] += 1
-#             continue
-#         if not face.apply(crop).passed:
-#             outcomes["rejected_at_face"] += 1
-#             continue
-#         if not age.apply(crop).passed:
-#             outcomes["rejected_at_age"] += 1
-#             continue
-
-#         outcomes["passed_all"] += 1
-
-#     for outcome, count in outcomes.most_common():
-#         logger.info(" {} : {}", outcome, count)

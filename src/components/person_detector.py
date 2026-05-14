@@ -1,20 +1,15 @@
 from __future__ import annotations
-from collections import Counter 
 
-import torch
 from ultralytics import YOLO
 
 from src.components.base import BaseFilter 
-from src.components.quality_filter import QualityFilter
-from src.settings.config import (PersonDetectionThresholds,
-                                 ModelsConfig,
-                                 QualityThresholds)
+from src.settings.config import PersonDetectionThresholds
+
 
 from src.entities.crop import Crop
 from src.entities.stage_results import StageResult
 
-from src.utils.io import ImageLoader 
-from src.constants import IMAGES_DIR,DEVICE 
+from src.constants import DEVICE 
 
 from src.exceptions.custom_exceptions import ModelLoadError
 from src.logger.custom_logger import logger 
@@ -63,6 +58,7 @@ class PersonDetector(BaseFilter):
             areas = (xyxyn[:,2] - xyxyn[:,0]) * (xyxyn[:,3] - xyxyn[:,1]) 
             # we use xyxyn instead of xyxy since its more better for area filtering (easier to communicate it)
             # area ratio per detection (x2-x1)*(y2-y1)
+            # ex detected person occupies 50% of image 
         else:
             xyxyn = confs = areas = None
         
@@ -118,31 +114,3 @@ class PersonDetector(BaseFilter):
                            reason=reason,
                            metrics=metrics)
 
-# if __name__ == "__main__":
-#     quality_thresholds = QualityThresholds()
-#     quality_filter = QualityFilter(quality_thresholds)
-    
-#     detection_thresholds = PersonDetectionThresholds()
-#     detector = PersonDetector(detection_thresholds)
-    
-#     loader = ImageLoader()
-
-#     outcomes: Counter[str] = Counter()
-
-#     for path in sorted(IMAGES_DIR.glob("*.png")):
-#         crop = loader.load(path)
-
-#         quality_result = quality_filter.apply(crop)
-#         if not quality_result.passed:
-#             outcomes['rejected_at_quality'] += 1
-#             continue 
-
-#         detection_result = detector.apply(crop)
-#         if not detection_result.passed:
-#             outcomes['rejected_at_detection'] += 1 
-#             continue
-        
-#         outcomes['passed_both'] += 1 
-    
-#     for outcome,count in outcomes.most_common():
-#         logger.info(f" {outcome} : {count}")
