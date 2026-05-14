@@ -15,13 +15,6 @@ from src.exceptions.custom_exceptions import ModelLoadError
 from src.logger.custom_logger import logger 
 
 class PersonDetector(BaseFilter):
-    """Detects the person in image with YOLOv11m
-    Rejects crops when:
-    1. No detections clears min_confidence
-    2. The best detections bbox covers less than min_bbox_area_ratio
-    3. More than max_persons valid detections (noisy multi-person) 
-    """
-
     name = "person_detection"
     PERSON_CLASS_ID = 0 
 
@@ -44,6 +37,10 @@ class PersonDetector(BaseFilter):
         logger.info("YOLO model ready")
     
     def _apply(self,crop: Crop) -> StageResult:
+        """Detects persons using YOLO and validates whether the dominant subject
+        occupies enough of the crop to be considered a meaningful full-person image.
+        Also rejects noisy multi-person scenes that may confuse downstream filters."""
+        
         results = self.model(crop.image,
                              conf=self.thresholds.min_confidence,
                              classes=[self.PERSON_CLASS_ID],
@@ -56,20 +53,15 @@ class PersonDetector(BaseFilter):
             xyxyn = boxes.xyxyn.cpu().numpy()
             confs = boxes.conf.cpu().numpy()
             areas = (xyxyn[:,2] - xyxyn[:,0]) * (xyxyn[:,3] - xyxyn[:,1]) 
-            # we use xyxyn instead of xyxy since its more better for area filtering (easier to communicate it)
-            # area ratio per detection (x2-x1)*(y2-y1)
-            # ex detected person occupies 50% of image 
         else:
             xyxyn = confs = areas = None
         
-        # apply area-ratio filter on top of YOLO confs filter 
         if n_raw > 0:
             valid_mask = areas >= self.thresholds.min_bbox_area_ratio
             n_valid = int(valid_mask.sum())
         else:
             n_valid = 0 
         
-        # pick the best detection largest among valid 
         if n_valid > 0:
             valid_areas = areas[valid_mask]
             valid_confs = confs[valid_mask]
@@ -89,7 +81,6 @@ class PersonDetector(BaseFilter):
                                     "top_confidence":top_confidence,
                                     "top_bbox_area_ratio":top_area}
         
-        # decision
         failures: list[str] = []
 
         if n_valid == 0:

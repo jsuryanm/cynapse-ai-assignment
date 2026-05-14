@@ -20,7 +20,6 @@ class StageResult(BaseModel):
     """
 
     model_config = ConfigDict(frozen=True,extra="forbid")
-    # frozen=True obj is immutable and extra="forbid" extra fields aren't allowed
 
     stage_name: str 
     crop_id: str 

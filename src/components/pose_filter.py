@@ -19,10 +19,6 @@ from src.logger.custom_logger import logger
 from src.settings.config import PoseThresholds
 
 class PoseFilter(BaseFilter):
-    """Full Body Verification with YOLO pose. 
-    Rejects crops where keypoints are not visible enough
-    specifically the (head,shoulder,hip and knee)"""
-
     name = "pose"
 
     def __init__(self,
@@ -43,7 +39,10 @@ class PoseFilter(BaseFilter):
         logger.info("YOLO pose model ready")
     
     def _apply(self,crop: Crop) -> StageResult:
-        # run pose inference 
+        """Uses YOLO pose keypoints to verify full-body visibility of detected person. 
+        Rejects crops where keypoints are not visible 
+        enough specifically the (head,shoulder,hip and knee)"""
+        
         results = self.model(crop.image,verbose=False)
         result = results[0]
         boxes = result.boxes
@@ -61,12 +60,8 @@ class PoseFilter(BaseFilter):
         
         xyxyn = boxes.xyxyn.cpu().numpy()
         areas = (xyxyn[:, 2] - xyxyn[:, 0]) * (xyxyn[:, 3] - xyxyn[:, 1])
-        # computes bounding box area for every detected person (x1,y1) top left side and (x2,y2) bottom right side  
-        # area tells us how big is the detected person
-        largest_idx = int(areas.argmax()) # select the largest detected person
-
-        kpts_conf = result.keypoints.conf[largest_idx].cpu().numpy() # usually out shape: (num_people,17)  
-        # kpts_conf shape: (17,) we have confidences for one person
+        largest_idx = int(areas.argmax()) 
+        kpts_conf = result.keypoints.conf[largest_idx].cpu().numpy()   
         visible_mask = kpts_conf >= self.thresholds.keypoint_confidence
 
         n_head_visible = int(visible_mask[list(HEAD_KPT_INDICES)].sum())

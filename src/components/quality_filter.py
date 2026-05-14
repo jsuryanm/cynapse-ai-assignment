@@ -10,17 +10,19 @@ from src.settings.config import QualityThresholds
 from src.logger.custom_logger import logger 
 
 class QualityFilter(BaseFilter):
-    """Stage 0: image quality check filter using CV techniques"""
     name = "quality"
 
     def __init__(self, thresholds: QualityThresholds) -> None:
         self.thresholds = thresholds
     
     def _apply(self,crop: Crop) -> StageResult:
+        """Runs fast OpenCV-based quality validation before inferencing with pretrained deep learning models.
+        Filters out unusable crops such as blurry, dark, overexposed, or badly shaped images
+        to reduce noise and avoid wasting GPU compute in downstream stages."""
+        
         width = crop.width
         height = crop.height 
         aspect = height / width 
-        # measures how tall an object is 
 
         gray = cv2.cvtColor(crop.image,cv2.COLOR_RGB2GRAY)
         brightness = float(gray.mean())

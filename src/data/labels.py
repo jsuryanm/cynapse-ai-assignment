@@ -32,7 +32,6 @@ def load_validation_csv(csv_path: Path) -> list[ValidationLabel]:
     labels: list[ValidationLabel] = []
 
     for i,record in enumerate(df.to_dict(orient="records"),start=2): 
-        # converts df to list of dicts containing row data
         try:
             labels.append(ValidationLabel(**record))
         except Exception as e:

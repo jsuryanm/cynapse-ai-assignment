@@ -14,7 +14,6 @@ from src.exceptions.custom_exceptions import ModelLoadError
 from src.logger.custom_logger import logger
 
 class FaceFilter(BaseFilter):
-    """face detection using InsightFace, SCRFD detector"""
     name = "face"
 
     def __init__(self,
@@ -37,8 +36,11 @@ class FaceFilter(BaseFilter):
         logger.info("InsightFace ready")
     
     def _apply(self,crop: Crop) -> StageResult:
+        """Detects visible faces inside the detected person region using InsightFace SCRFD detector.
+        Ensures the face is large, confident, and geometrically consistent so that
+        heavily occluded, cropped, or invalid faces are filtered out early."""
+        
         img_bgr = cv2.cvtColor(crop.image,cv2.COLOR_RGB2BGR)
-        # detect faces
         faces = self.app.get(img_bgr) 
         n_faces = len(faces)
 
@@ -62,7 +64,6 @@ class FaceFilter(BaseFilter):
             valid_indices = list(range(len(faces)))
         
         else:
-            # convert normalized coords to pixel coords
             px1 = person_bbox_norm[0] * crop.width 
             py1 = person_bbox_norm[1] * crop.height
             px2 = person_bbox_norm[2] * crop.width
@@ -71,12 +72,10 @@ class FaceFilter(BaseFilter):
             valid_indices = []
 
             for i,f in enumerate(faces):
-                # compute face center 
                 cx = (f.bbox[0] + f.bbox[2]) / 2
                 cy = (f.bbox[1] + f.bbox[3]) / 2 
 
                 if px1 <= cx <= px2 and py1 <= cy <= py2:
-                    # only points that lie between face centers are accepted
                     valid_indices.append(i)
         
         if not valid_indices:
@@ -101,7 +100,6 @@ class FaceFilter(BaseFilter):
         kps_y = best.kps[:,1]
         
         all_inside = bool(np.all((kps_x >= x1) & (kps_x <= x2) & (kps_y >= y1) & (kps_y <= y2)))
-        # checks if all facial landmarks are within detected face in bounding box  
         metrics: dict[str,float] = {"n_faces":float(n_faces),
                                     "top_face_confidence":top_face_confidence,
                                     "top_face_area_ratio":top_face_area_ratio,

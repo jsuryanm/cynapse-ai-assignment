@@ -25,7 +25,6 @@ from src.logger.custom_logger import logger
 
 
 class AdFilter(BaseFilter):
-    """zero-shot ad/manequin filter"""
     name = "ad_filter"
     
     def __init__(self, 
@@ -42,7 +41,6 @@ class AdFilter(BaseFilter):
         except Exception as e:
             raise ModelLoadError(f"Failed to load CLIP from {CLIP_MODEL_ID} on {self.device}:{e}") from e 
         
-        # cache prompt embeddings 
         self.real_prompts = thresholds.real_person_prompts
         self.ad_prompts = thresholds.ad_prompts
         self.real_embeddings = self._encode_text(self.real_prompts) 
@@ -82,9 +80,11 @@ class AdFilter(BaseFilter):
         return embeddings 
     
     def _apply(self,crop: Crop) -> StageResult:
+        """Uses CLIP zero-shot similarity scoring to distinguish real people
+        from advertisements, mannequins, studio shoots, or retail displays.
+        Compares image embeddings against curated prompt groups using cosine similarity."""
         img_emb = self._encode_image(crop.image)
 
-        # compute similarities against both prompt sets
         real_scores = (img_emb @ self.real_embeddings.T).squeeze(0).cpu().numpy()
         ad_scores = (img_emb @ self.ad_embeddings.T).squeeze(0).cpu().numpy()
 

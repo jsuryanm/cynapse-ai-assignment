@@ -19,7 +19,6 @@ from src.logger.custom_logger import logger
 from src.constants import AGE_MODEL_ID,DEVICE
 
 class AgeFilter(BaseFilter):
-    """Predicting age and gender with MiVOLO v2, reject minors"""
     name = "age"
     
     def __init__(self,
@@ -47,6 +46,10 @@ class AgeFilter(BaseFilter):
         logger.info(f"MiVOLOv2 ready in fp16,device: {self.device}")
 
     def _apply(self,crop: Crop) -> StageResult:
+        """Estimates age using both face and body context from MiVOLOv2.
+        Rejects minors below 16 years and low-confidence predictions to improve dataset safety
+        and maintain higher label reliability for downstream training."""
+        
         face_bbox = crop.extras.get("face_bbox")
         person_bbox = crop.extras.get("person_bbox")
 
@@ -60,7 +63,6 @@ class AgeFilter(BaseFilter):
         face_x1,face_y1,face_x2,face_y2 = self._denormalize(face_bbox,W,H)
         body_x1,body_y1,body_x2,body_y2 = self._denormalize(person_bbox,W,H)
 
-        # Clamp coordinates to image bounds
         face_x1 = max(0, min(face_x1, W - 1))
         face_x2 = max(0, min(face_x2, W))
 
@@ -73,7 +75,6 @@ class AgeFilter(BaseFilter):
         body_y1 = max(0, min(body_y1, H - 1))
         body_y2 = max(0, min(body_y2, H))
 
-        # Validate crop geometry
         if face_x2 <= face_x1 or face_y2 <= face_y1:
             return self._build_result(crop_id=crop.crop_id,
                                       passed=False,

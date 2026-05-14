@@ -11,10 +11,9 @@ from src.entities.final_decision import FinalDecision
 
 
 def build_environment(data_dir: str) -> dict[str, Any]:
-    """Capture the runtime context this manifest was produced in.
-
-    Written as a sidecar file (environment.json), not embedded in the manifest.
-    """
+    """Collects runtime and library version information 
+    used during the pipeline run."""
+    
     env: dict[str, Any] = {"python": sys.version.split()[0],
                            "platform": platform.platform(),
                            "data_dir": data_dir}
@@ -30,7 +29,9 @@ def build_environment(data_dir: str) -> dict[str, Any]:
 
 def _build_stage_stats(decisions: list[FinalDecision],
                        stage_order: list[str]) -> list[dict[str, Any]]:
-    """Compute per-stage funnel for a cascade pipeline. (See previous turn.)"""
+    """Computes stage-wise pipeline filtering statistics for the curation run.
+    Tracks how many crops entered, passed, and were rejected at each stage"""
+
     rejected_by_stage: Counter[str] = Counter()
     for d in decisions:
         if not d.kept and d.rejected_at_stage is not None:
@@ -65,10 +66,9 @@ def build_manifest(run_id: str,
                    dedup_report: DedupReport,
                    decisions: list[FinalDecision],
                    stage_order: list[str]) -> dict[str, Any]:
-    """Assemble the slim run summary.
-
-    Bulky reference data (full duplicate groups, exact config, environment)
-    is written to sidecar files in the same run folder.
+    """Builds a compact summary of the complete pipeline execution.
+    Stores runtime duration, deduplication results, final outcomes,
+    and per-stage rejection statistics for reporting and reproducibility.
     """
     outcomes: Counter[str] = Counter()
     for d in decisions:

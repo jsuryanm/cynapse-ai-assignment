@@ -4,11 +4,10 @@ import sys
 from datetime import datetime 
 from pathlib import Path 
 from loguru import logger 
+from src.constants import PROJECT_ROOT_DIR
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2] 
-# file refers to the current file and resolve will return the absolute path and parents gives all parent dirs
 
-LOGS_DIR = PROJECT_ROOT / "logs"
+LOGS_DIR = PROJECT_ROOT_DIR / "logs"
 
 __all__ = ["logger", "configure_logger"]
 

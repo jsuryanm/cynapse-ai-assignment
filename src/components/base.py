@@ -16,15 +16,8 @@ class BaseFilter(ABC):
 
     @abstractmethod
     def _apply(self,crop: Crop) -> StageResult:
-        """Run the stage's logic on a single crop
-        
-        Subclasses must return:
-        - return a `StageResult` with `stage_name == self.name`
-        - populate `metrics` with every value used in the decision
-        - never raise on legitimate "rejected" cases — those are normal
-        outcomes and must come back as `passed=False`
-        - only raise for unexpected programming errors (which the wrapper
-        converts to `StageExecutionError`)"""
+        """Run the stage's domain logic on a single crop 
+        and returns StageResult object"""
 
     def apply(self,crop: Crop) -> StageResult:
         """Wraps _apply with timing and error handling.

@@ -14,7 +14,7 @@ from src.data.integrity import DedupReport
 from src.entities.final_decision import FinalDecision
 from src.logger.custom_logger import logger 
 
-SAMPLES_PER_STAGE = 20 # how many rejected samples to keep per stage
+SAMPLES_PER_STAGE = 20 # rejected samples to keep per stage
 
 def _ensure_folder(path: Path) -> Path:
     path.mkdir(parents=True,exist_ok=True)
@@ -84,8 +84,7 @@ def write_manifest(manifest: dict[str, Any], path: Path) -> None:
 
 
 def copy_log_file(log_file: Path, run_folder: Path) -> None:
-    """Copy the active log file into the run folder for archival.
-    Best-effort — if the log file isn't where expected, we skip."""
+    """Copy the active log file into the run folder for archival."""
     if log_file is None or not log_file.exists():
         logger.warning("Log file not found at {}, skipping archive", log_file)
         return

@@ -11,18 +11,12 @@ from src.logger.custom_logger import logger
 from src.exceptions.custom_exceptions import ImageProcessingError
 
 class ImageLoader:
-    """Single source of truth for loading image crops goes through this class.
-    Centralizing loading guarentees consistent behavior:
-    1. Corrupt files raises ImageProcessingError
-    2. EXIF orientation applied (Determines how an img should be rotated to appear correctly)
-    3. Output is always RGB (H,W,3)
-    4. No image preprocessing (no resizing, no normalization, no CLAHE)
-    """
-
     SUPPORTED_EXTENSIONS: frozenset[str] = frozenset({".jpg",".jpeg",".png"})
 
     def load(self,path: Path) -> Crop:
-        """Load single image and return Crop entity"""
+        """Load single image and check if image is valid.
+        Apply exif_transpose() to ensure image is in the right orientation.
+        Converts image to a numpy array to be consistent with RGB images."""
 
         if not path.exists():
             raise ImageProcessingError(f"Image not found: {path}")
@@ -61,12 +55,3 @@ class ImageLoader:
         logger.info(f"Loaded {path.name} | shape: ({width,height,3}) | bytes: {array.nbytes}")
 
         return crop 
-
-# if __name__ == "__main__":
-#     PROJECT_ROOT_DIR = Path(__file__).resolve().parents[2]
-#     DATA_DIR = PROJECT_ROOT_DIR / "data"
-#     test_img_path = DATA_DIR / "raw" /  "crop (1088).png"
-
-#     img_loader = ImageLoader()
-#     test_crop = img_loader.load(test_img_path)
-#     print(test_crop)

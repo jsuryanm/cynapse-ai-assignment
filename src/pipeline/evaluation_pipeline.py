@@ -23,12 +23,6 @@ VIOLATION_TO_EXPECTED_STAGE: dict[ViolationReason, str] = {
 
 @dataclass(frozen=True,slots=True)
 class ConfusionMatrix:
-    """Pipeline predictions vs ground truth. should_keep: Positive class
-    tp: correctly kept(truth=keep,pipeline=keep)
-    fn: good crop lost(truth=keep,pipeline=reject)
-    tn: correctly reject(truth=reject,pipeline=reject)
-    fp: bad crop leaked(truth=reject,pipeline=keep)"""
-
     tp: int 
     fp: int 
     tn: int 
@@ -99,15 +93,13 @@ class ViolationCoverage:
         return self.n_rejected_at_expected_stage / self.n_labeled
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            "violation": self.violation,
-            "n_labeled": self.n_labeled,
-            "n_rejected": self.n_rejected,
-            "coverage": round(self.coverage, 4),
-            "n_rejected_at_expected_stage": self.n_rejected_at_expected_stage,
-            "coverage_at_expected_stage": round(self.coverage_at_expected_stage, 4),
-            "stage_breakdown": self.stage_breakdown,
-        }
+        return {"violation": self.violation,
+                "n_labeled": self.n_labeled,
+                "n_rejected": self.n_rejected,
+                "coverage": round(self.coverage, 4),
+                "n_rejected_at_expected_stage": self.n_rejected_at_expected_stage,
+                "coverage_at_expected_stage": round(self.coverage_at_expected_stage, 4),
+                "stage_breakdown": self.stage_breakdown}
 
 
 @dataclass(frozen=True, slots=True)
@@ -123,26 +115,20 @@ class EvaluationResult:
     violations: list[ViolationCoverage]
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            "n_labels": self.n_labels,
-            "n_decisions": self.n_decisions,
-            "n_evaluated": self.n_evaluated,
-            "n_unmatched_labels": self.n_unmatched_labels,
-            "unmatched_label_ids": self.unmatched_label_ids,
-            "overall": self.confusion.to_dict(),
-            "violations": [v.to_dict() for v in self.violations],
-        }
+        return {"n_labels": self.n_labels,
+                "n_decisions": self.n_decisions,
+                "n_evaluated": self.n_evaluated,
+                "n_unmatched_labels": self.n_unmatched_labels,
+                "unmatched_label_ids": self.unmatched_label_ids,
+                "overall": self.confusion.to_dict(),
+                "violations": [v.to_dict() for v in self.violations]}
 
 
-def evaluate_run(
-    decisions_path: Path,
-    labels: list[ValidationLabel],
-) -> EvaluationResult:
+def evaluate_run(decisions_path: Path,
+                 labels: list[ValidationLabel]) -> EvaluationResult:
     """Compare pipeline decisions against ground-truth labels.
-
     Only labeled crops contribute to the metrics. Unmatched labels are
-    reported separately so you know how much of your validation set
-    actually flowed through the pipeline.
+    reported separately.
     """
     if not decisions_path.exists():
         raise ValidationError(f"Decisions file not found: {decisions_path}")
@@ -199,19 +185,15 @@ def evaluate_run(
 def _confusion_matrix(
     matched: list[tuple[ValidationLabel, dict[str, Any]]],
 ) -> ConfusionMatrix:
-    """Tally TP/FP/TN/FN using sklearn for the count step.
-
-    Positive class = 'should_keep'. We pin labels=[True, False] so the
-    unpacking is deterministic regardless of data distribution.
-    """
+    """Computes the confusion matrix between ground-truth labels and pipeline predictions.
+    Measures how well the curation pipeline keeps valid crops and rejects invalid ones
+    by calculating TP, FP, TN, and FN statistics used for evaluation metrics."""
     if not matched:
         return ConfusionMatrix(tp=0, fp=0, tn=0, fn=0)
 
     y_true = [label.should_keep for label, _ in matched]
     y_pred = [decision["kept"] for _, decision in matched]
 
-    # Rows = true class, cols = predicted class, both ordered [True, False].
-    # cm[0,0]=TT=TP, cm[0,1]=TF=FN, cm[1,0]=FT=FP, cm[1,1]=FF=TN.
     cm = sk_confusion_matrix(y_true, y_pred, labels=[True, False])
     tp, fn = int(cm[0, 0]), int(cm[0, 1])
     fp, tn = int(cm[1, 0]), int(cm[1, 1])
@@ -221,11 +203,10 @@ def _confusion_matrix(
 def _per_violation_coverage(
     matched: list[tuple[ValidationLabel, dict[str, Any]]],
 ) -> list[ViolationCoverage]:
-    """For each violation type, count how many were caught and where.
-
-    Stays hand-rolled because the logic is domain-specific:
-    sklearn doesn't know about your stages or your violation taxonomy.
-    """
+    """Computes rejection coverage separately for each violation category in the dataset.
+    Tracks whether invalid crops were rejected and whether they failed at the expected
+    pipeline stage, helping diagnose weak filters and stage-level failure patterns."""
+    
     by_violation: dict[ViolationReason, list[dict[str, Any]]] = defaultdict(list)
     for label, decision in matched:
         if label.violation_reason is not None:
