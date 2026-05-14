@@ -220,11 +220,10 @@ __marimo__/
 
 artifacts/eda 
 artifacts/label_review 
-artifacts/runs/2026-05-12_204240/kept
-artifacts/runs/2026-05-12_204240/samples
-artifacts/runs/2026-05-12_204240/tmp/*
-artifacts/runs/2026-05-12_204240/environment.json
-artifacts/runs/2026-05-14_152858
+artifacts/runs/2026-05-14_174637/kept
+artifacts/runs/2026-05-14_174637/samples
+artifacts/runs/2026-05-14_174637/tmp/*
+artifacts/runs/2026-05-14_174637/environment.json
 
 *.pt
 *.docx
